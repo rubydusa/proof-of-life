@@ -4,10 +4,15 @@ const path = require("path");
 
 const snarkjs = require("snarkjs");
 
+const { TASK_COMPILE } = require("hardhat/builtin-tasks/task-names");
+const TASK_CIRCOM = "circom-compile";
+
 module.exports = {
 	solidity: "0.8.17",
 	circom: {
-		plonk: "circuits/powersOfTau28_hez_final_13.ptau",
+		outDir: "artifacts/circom",  // relative to root path
+		verifierOutDir: "verifiers",  // relative to sources path
+		plonk: "circuits/powersOfTau28_hez_final_13.ptau",  // relative to root path
 		options: "--r1cs --wasm",
 		circuits: {
 			"Gol4x4": {
@@ -24,37 +29,85 @@ module.exports = {
  * Tasks
  */
 
-task("compile-circom", "Compiles all circuits in circuits directory", async () => {
-	const { circuits, options, plonk } = module.exports.circom;
+task(TASK_CIRCOM, "Compiles all circuits in circuits directory")
+	.setAction(async (_args, hre, _runSuper) => {
+		const circomConfig = hre.userConfig.circom;
+		const { root, sources } = hre.config.paths;
 
-	for (const [circuitName, circuitObject] of Object.entries(circuits)) {
-		const dirOutPath = `${__dirname}/artifacts/circuits/${circuitName}`;
-		fs.mkdirSync(dirOutPath, { recursive: true });
+		for (const [circuitName, circuitObject] of Object.entries(circomConfig.circuits)) {
+			// setup circom circuit file
+			const circuitOutPath = circuitOutDir(circuitName, circomConfig);
+			fs.mkdirSync(circuitOutPath, { recursive: true });
 
-		const circomDestPath = `${dirOutPath}/${circuitName}.circom`; 
-		const content = `${includeString(circuitObject)}\n${circuitMainString(circuitObject)}`;
-		fs.writeFileSync(circomDestPath, content);
+			const circomDestPath = `${circuitOutPath}/${circuitName}.circom`; 
+			const content = circuitString(circuitObject);
+			fs.writeFileSync(circomDestPath, content);
 
-		execSync(`circom ${options} -o ${dirOutPath} ${circomDestPath}`);
+			// compile
+			execSync(`circom ${circomConfig.options} -o ${circuitOutPath} ${circomDestPath}`);
 
-		await snarkjs.plonk.setup(
-			`${dirOutPath}/${circuitName}.r1cs`, 
-			`${__dirname}/${plonk}`, 
-			`${dirOutPath}/${circuitName}.zkey`
-		);
-		const solidityVerifier = await snarkjs.zKey.exportSolidityVerifier(
-			`${dirOutPath}/${circuitName}.zkey`, 
-			solidityTemplates
-		);
+			// generate zkey
+			await snarkjs.plonk.setup(
+				`${circuitOutPath}/${circuitName}.r1cs`, 
+				`${root}/${circomConfig.plonk}`, 
+				`${circuitOutPath}/${circuitName}.zkey`
+			);
 
-		const solidityDestPath = `${dirOutPath}/Verifier.sol`;
-		fs.writeFileSync(solidityDestPath, solidityVerifier);
+			// create solidity verifierContract
+			const solidityVerifier = await snarkjs.zKey.exportSolidityVerifier(
+				`${circuitOutPath}/${circuitName}.zkey`, 
+				solidityTemplates
+			);
+
+			const dirVerifierOutPath = `${sources}/${circomConfig.verifierOutDir}`;
+			fs.mkdirSync(dirVerifierOutPath, { recursive: true });
+
+			const solidityDestPath = `${dirVerifierOutPath}/${circuitVerifierContractName(circuitName)}.sol`;
+			fs.writeFileSync(solidityDestPath, solidityVerifier);
+		}
+	});
+
+task(TASK_COMPILE, "hook compile task to include circuit compilation")
+	.setAction(async (_args, hre, runSuper) => {
+		await hre.run(TASK_CIRCOM);
+		await runSuper();
+	});
+
+/*
+ * HRE Extension
+ */
+
+extendEnvironment((hre) => {
+	if (hre.circom === undefined) {
+		hre.circom = {};
 	}
+	hre.circom.getVerifierFactory = async (circuitName) => {
+		const circomConfig = hre.userConfig.circom;
+		return await hre.artifacts.readArtifact(verifierFullyQualifiedName(circuitName, circomConfig));
+	};
+
+	hre.circom.generateCalldata = async (circuitName, input) => {
+		const circomConfig = hre.userConfig.circom;
+		const circuitOutPath = circuitOutDir(circuitName, circomConfig);
+		const wasmPath = `${circuitOutPath}/${circuitName}_js/${circuitName}.wasm`;
+		const zkeyPath = `${circuitOutPath}/${circuitName}.zkey`;
+
+		const { proof, publicSignals } = await snarkjs.plonk.fullProve(input, wasmPath, zkeyPath);
+		return await snarkjs.plonk.exportSolidityCallData(proof, publicSignals);
+	};
 });
 
 /*
  * Helpers
  */
+
+const verifierFullyQualifiedName = (circuitName, circomConfig) => 
+	`${path.basename(hre.config.paths.sources)}/${circomConfig.verifierOutDir}/${circuitVerifierContractName(circuitName)}.sol:PlonkVerifier`;
+
+const circuitOutDir = (circuitName, circomConfig) => `${hre.config.paths.root}/${circomConfig.outDir}/${circuitName}`;
+
+const circuitString = (circuitObject) => 
+	`${includeString(circuitObject)}\n${circuitMainString(circuitObject)}`;
 
 const circuitMainString = ({ componentName, publicSignals, args }) => {
 	const publicSignalsString = publicSignals.length > 0 ? `{public [${publicSignals.join()}]} ` : "";
@@ -63,6 +116,12 @@ const circuitMainString = ({ componentName, publicSignals, args }) => {
 }
 
 const includeString = ({ path }) => `include "${__dirname}/${path}";`;
+
+const circuitVerifierContractName = (circuitName) => `${circuitName}Verifier`;
+
+/*
+ * Load
+ */
 
 // loads on running this script
 const solidityTemplates = (() => {
