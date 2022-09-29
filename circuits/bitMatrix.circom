@@ -42,7 +42,7 @@ template DeconstructBitMatrix(W, H) {
 	component bits2Nums[k];
 	for (var i = 0; i < k; i++) {
 		var size = i == k - 1 ? s : 254;
-		bits2Nums[i] <== Bits2Num(size);
+		bits2Nums[i] = Bits2Num(size);
 	}
 
 	for (var x = 0; x < W; x++) {

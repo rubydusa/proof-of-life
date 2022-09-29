@@ -146,14 +146,16 @@ const getCircuitArtifactPath = (artifactType, circuitName, hre) => {
 }
 
 const circuitObjectCode = (circuitObject, hre) => { 
-	const { path, componentName, publicSignals, args} = circuitObject;
+	const { path, componentName, publicSignals, args, version } = circuitObject;
 	const { root } = hre.config.paths;
 
+	const pragmaString = `pragma circom ${version};`;
 	const includeString = `include "${root}/${path}";`
 	const publicSignalsString = publicSignals.length > 0 ? `{public [${publicSignals.join()}]} ` : "";
 	const mainComponenetString = `component main ${publicSignalsString}= ${componentName}(${args.join()});`
 
 	return [
+		pragmaString,
 		includeString,
 		mainComponenetString
 	].join("\n");
