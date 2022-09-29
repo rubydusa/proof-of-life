@@ -1,3 +1,5 @@
+pragma circom 2.0.8;
+
 include "./gol.circom";
 
 // n is amount of iterations

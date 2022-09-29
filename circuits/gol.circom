@@ -1,3 +1,5 @@
+pragma circom 2.0.8;
+
 include "../node_modules/circomlib/circuits/comparators.circom";
 // constrains in to be a binary input
 template GoL(W, H) {
