@@ -28,10 +28,6 @@ const CircuitArtifact = Object.freeze({
  * Tasks
  */
 
-task("blob", "", async () => {
-
-});
-
 task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 	.setAction(async (_args, hre, _runSuper) => {
 		const { options, circuits } = hre.userConfig.circom;
@@ -80,23 +76,38 @@ task(TASK_COMPILE, "hook compile task to include circuit compilation")
  */
 
 extendEnvironment((hre) => {
-	if (hre.circom === undefined) {
-		hre.circom = {};
-	}
-
-	hre.circom.getVerifierFactory = async (circuitName) => {
+	const getVerifierFactory = async (circuitName) => {
 		return await hre.artifacts.readArtifact(
 			getCircuitArtifactPath(CircuitArtifact.VERIFIER_FULLY_QUALIFIED_NAME, circuitName, hre)
 		);
-	};
+	}
 
-	hre.circom.generateCalldata = async (circuitName, input) => {
+	const generateProof = async (circuitName, input) => {
 		const wasmPath = getCircuitArtifactPath(CircuitArtifact.WASM, circuitName, hre);
 		const zkeyPath = getCircuitArtifactPath(CircuitArtifact.ZKEY, circuitName, hre);
 
-		const { proof, publicSignals } = await snarkjs.plonk.fullProve(input, wasmPath, zkeyPath);
+		return await snarkjs.plonk.fullProve(input, wasmPath, zkeyPath);
+	}
+
+	const verifyProof = async (circuitName, { proof, publicSignals }) => {
+		const zkeyPath = getCircuitArtifactPath(CircuitArtifact.ZKEY, circuitName, hre);
+		const verificationKey = await snarkjs.plonk.zKey.exportVerificationKey(zkeyPath);
+
+		return await snarkjs.plonk.verify(verificationKey, publicSignals, proof);
+	}
+
+	const generateCalldata = async (circuitName, input) => {
+		const { proof, publicSignals } = hre.circom.generateProof(circuitName, input)
 		return await snarkjs.plonk.exportSolidityCallData(proof, publicSignals);
 	};
+
+	hre.circom = {
+		...hre.circom, 
+		getVerifierFactory,
+		generateProof,
+		verifyProof,
+		generateCalldata,
+	}
 });
 
 /*
