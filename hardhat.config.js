@@ -22,6 +22,20 @@ module.exports = {
 				publicSignals: [],
 				args: [4, 4],
 			},
+			"CreateBitMatrix6x4": {
+				version: "2.0.8",
+				path: "circuits/bitMatrix.circom",
+				componentName: "CreateBitMatrix",
+				publicSignals: [],
+				args: [6, 4],
+			},
+			"DeconstructBitMatrix6x4": {
+				version: "2.0.8",
+				path: "circuits/bitMatrix.circom",
+				componentName: "DeconstructBitMatrix",
+				publicSignals: [],
+				args: [6, 4],
+			},
 		}
 	}
 };
