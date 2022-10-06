@@ -36,6 +36,20 @@ module.exports = {
 				publicSignals: [],
 				args: [6, 4],
 			},
+			"Gol4x4": {
+				version: "2.0.8",
+				path: "circuits/gol.circom",
+				componentName: "GoL",
+				publicSignals: [],
+				args: [4, 4],
+			},
+			"Gol3N4x4": {
+				version: "2.0.8",
+				path: "circuits/goln.circom",
+				componentName: "GoLN",
+				publicSignals: [],
+				args: [3, 4, 4],
+			}
 		}
 	}
 };
