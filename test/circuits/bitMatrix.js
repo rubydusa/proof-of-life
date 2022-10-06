@@ -1,199 +1,207 @@
-const hre = require("hardhat");
 const chai = require("chai");
-chai.use(require('chai-as-promised'));
 const BN = require("bn.js");
+const { circuitTestsFromData } = require("../../testutils.js");
 
-const testCreateBitMatrix = (testData, name, w, h) => {
-	return Object.entries(testData).forEach(([index, [num, matrix]]) => {
-		it(`Proof Test #${index}`, async () => {
-			if (matrix === null) {
-				await chai.expect(
-					hre.circom.generateProof(
-						name,
-						{ "in": [num] }
-					)
-				).to.be.rejectedWith("Error in template");
-				return;
-			}
+const CREATE_BIT_MATRIX4x4 = "CreateBitMatrix4x4";
+const DECONSTRUCT_BIT_MATRIX4x4 = "DeconstructBitMatrix4x4";
+const CREATE_BIT_MATRIX6x4 = "CreateBitMatrix6x4";
+const DECONSTRUCT_BIT_MATRIX6x4 = "DeconstructBitMatrix6x4";
 
-			const { publicSignals } = await hre.circom.generateProof(
-				name,
-				{ "in": [num] }
-			);
+const createBitMatrixHooks = [
+	{
+		name: "num2circomBitMatrix",
+		f: async ({metadata, input, output}) => {
+			const { w, h } = metadata;
+			chai.expect(output).to.be.eql(num2circomBitMatrix(input["in"], w, h));
+		}
+	}
+]
 
-			chai.expect(publicSignals).to.be.eql(matrix);
-		});
-
-		it(`num2circomBitMatrix Test #${index}`, async () => {
-			if (matrix !== null) {
-				chai.expect(matrix).to.be.eql(num2circomBitMatrix(num, w, h));
-			}
-		});
-	});
-}
-
-const testDeconstructBitMatrix = (testData, name, w, h) => {
-	Object.entries(testData).forEach(([index, [matrix, num]]) => {
-		it(`Proof Test #${index}`, async () => {
-			const { publicSignals } = await hre.circom.generateProof(
-				name,
-				{ "in": matrix }
-			);
-
-			chai.expect(publicSignals).to.be.eql([num]);
-		});
-	});
-}
-
-describe("BitMatrix", () => {
-	const CREATE_BIT_MATRIX4x4 = "CreateBitMatrix4x4";
-	const DECONSTRUCT_BIT_MATRIX4x4 = "DeconstructBitMatrix4x4";
-	const CREATE_BIT_MATRIX6x4 = "CreateBitMatrix6x4";
-	const DECONSTRUCT_BIT_MATRIX6x4 = "DeconstructBitMatrix6x4";
-
-	describe(CREATE_BIT_MATRIX4x4, () => {
-		const testData = [
-			[
-				"0",
-				[
+const testData = [
+	{
+		name: CREATE_BIT_MATRIX4x4,
+		metadata: {
+			w: 4,
+			h: 4,
+		},
+		cases: [
+			{
+				input: {
+					"in": "0"
+				},
+				output: [
 					"0", "0", "0", "0",
 					"0", "0", "0", "0",
 					"0", "0", "0", "0",
 					"0", "0", "0", "0",
 				],
-			],
-			[
-				"65535",  // 2**16 - 1
-				[
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "65535"
+				},
+				output: [
 					"1", "1", "1", "1",
 					"1", "1", "1", "1",
 					"1", "1", "1", "1",
 					"1", "1", "1", "1",
 				],
-			],
-			[
-				"54433",
-				[
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "54433"
+				},
+				output: [
 					"1", "0", "0", "1",
 					"0", "1", "0", "0",
 					"0", "0", "1", "1",
 					"0", "1", "0", "1",
 				],
-			],
-			[
-				"65536",  // 2**16
-				null,
-			],
-		];
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "65536"
+				},
+				output: null,
+			},
+		]
+	},
+	{
+		name: DECONSTRUCT_BIT_MATRIX4x4,
+		metadata: {},
+		cases: [
+			{
+				input: {
+					"in": [
+						["0", "0", "0", "0"],
+						["0", "0", "0", "0"],
+						["0", "0", "0", "0"],
+						["0", "0", "0", "0"],
+					]
+				},
+				output: ["0"],
+			},
+			{
+				input: {
+					"in": [
+						["1", "1", "1", "1"],
+						["1", "1", "1", "1"],
+						["1", "1", "1", "1"],
+						["1", "1", "1", "1"],
+					]
+				},
+				output: ["65535"],
+			},
+			{
+				input: {
+					"in": [
+						["1", "0", "0", "1"],
+						["0", "1", "0", "0"],
+						["0", "0", "1", "1"],
+						["0", "1", "0", "1"],
+					]
+				},
+				output: ["54433"],
+			},
+		]
+	},
+	{
+		name: CREATE_BIT_MATRIX6x4,
+		metadata: {
+			w: 6,
+			h: 4
+		},
+		cases: [
+			{
+				input: {
+					"in": "0"
+				},
+				output: [
+					"0", "0", "0", "0", "0", "0", 
+					"0", "0", "0", "0", "0", "0", 
+					"0", "0", "0", "0", "0", "0", 
+					"0", "0", "0", "0", "0", "0"
+				],
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "16777215"
+				},
+				output: [
+					"1", "1", "1", "1", "1", "1", 
+					"1", "1", "1", "1", "1", "1", 
+					"1", "1", "1", "1", "1", "1", 
+					"1", "1", "1", "1", "1", "1"
+				],
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "13754799"
+				},
+				output: [
+					"1", "0", "0", "0", "1", "1", 
+					"1", "0", "1", "1", "1", "1", 
+					"1", "0", "1", "0", "0", "0", 
+					"1", "1", "1", "0", "0", "1"
+				],
+				hooks: createBitMatrixHooks,
+			},
+			{
+				input: {
+					"in": "16777216"
+				},
+				output: null,
+			},
+		]
+	},
+	{
+		name: DECONSTRUCT_BIT_MATRIX6x4,
+		metadata: {},
+		cases: [
+			{
+				input: {
+					"in": [
+						"0", "0", "0", "0", "0", "0", 
+						"0", "0", "0", "0", "0", "0", 
+						"0", "0", "0", "0", "0", "0", 
+						"0", "0", "0", "0", "0", "0"
+					]
+				},
+				output: ["0"],
+			},
+			{
+				input: {
+					"in": [
+						"1", "1", "1", "1", "1", "1", 
+						"1", "1", "1", "1", "1", "1", 
+						"1", "1", "1", "1", "1", "1", 
+						"1", "1", "1", "1", "1", "1"
+					]
+				},
+				output: ["16777215"],
+			},
+			{
+				input: {
+					"in": [
+						"1", "0", "0", "0", "1", "1", 
+						"1", "0", "1", "1", "1", "1", 
+						"1", "0", "1", "0", "0", "0", 
+						"1", "1", "1", "0", "0", "1"
+					]
+				},
+				output: ["13754799"],
+			},
+		]
+	}
+]
 
-		testCreateBitMatrix(testData, CREATE_BIT_MATRIX4x4, 4, 4);
-	});
-
-	describe(DECONSTRUCT_BIT_MATRIX4x4, () => {
-		const testData = [
-			[
-				[
-					["0", "0", "0", "0"],
-					["0", "0", "0", "0"],
-					["0", "0", "0", "0"],
-					["0", "0", "0", "0"],
-				],
-				"0",
-			],
-			[
-				[
-					["1", "1", "1", "1"],
-					["1", "1", "1", "1"],
-					["1", "1", "1", "1"],
-					["1", "1", "1", "1"],
-				],
-				"65535",  // 2**16 - 1
-			],
-			[
-				[
-					["1", "0", "0", "1"],
-					["0", "1", "0", "0"],
-					["0", "0", "1", "1"],
-					["0", "1", "0", "1"],
-				],
-				"54433",
-			],
-		];
-
-		testDeconstructBitMatrix(testData, DECONSTRUCT_BIT_MATRIX4x4, 4, 4);
-	});
-
-	describe(CREATE_BIT_MATRIX6x4, () => {
-		const testData = [
-			[
-				"16777215",
-				[
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1'
-				],
-			],
-			[
-				"0",
-				[
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0'
-				],
-			],
-			[
-				"13754799",
-				[
-					'1', '0', '0', '0', '1', '1', 
-					'1', '0', '1', '1', '1', '1', 
-					'1', '0', '1', '0', '0', '0', 
-					'1', '1', '1', '0', '0', '1'
-				],
-			],
-			[
-				"16777216",
-				null,
-			],
-		];
-
-		testCreateBitMatrix(testData, CREATE_BIT_MATRIX6x4, 6, 4);
-	});
-
-	describe(DECONSTRUCT_BIT_MATRIX6x4, () => {
-		const testData = [
-			[
-				[
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1', 
-					'1', '1', '1', '1', '1', '1'
-				],
-				"16777215",
-			],
-			[
-				[
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0', 
-					'0', '0', '0', '0', '0', '0'
-				],
-				"0",
-			],
-			[
-				[
-					'1', '0', '0', '0', '1', '1', 
-					'1', '0', '1', '1', '1', '1', 
-					'1', '0', '1', '0', '0', '0', 
-					'1', '1', '1', '0', '0', '1'
-				],
-				"13754799",
-			],
-		];
-
-		testDeconstructBitMatrix(testData, DECONSTRUCT_BIT_MATRIX6x4, 6, 4);
-	});
+describe("BitMatrix", () => {
+	testData.forEach(unitData => circuitTestsFromData(unitData));
 });
 
 const num2circomBitMatrix = (n, w, h) => {
