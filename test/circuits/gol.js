@@ -59,6 +59,6 @@ const testData = [
 	}
 ];
 
-describe("BitMatrix", () => {
+describe("GoL", () => {
 	testData.forEach(unitData => circuitTestsFromData(unitData));
 });
