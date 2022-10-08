@@ -3,6 +3,7 @@ require("hardhat/config");
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const snarkjs = require("snarkjs");
 
 const { TASK_COMPILE } = require("hardhat/builtin-tasks/task-names");
@@ -49,7 +50,7 @@ task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 			execSync(`circom ${options} -o ${circuitOutDirectory} ${circuitCompilePath}`);
 
 			// generate zkey
-			const { protocol } = circuitObject;
+			const { protocol, beacon } = circuitObject;
 			if (protocol === PLONK) {
 				await snarkjs.plonk.setup(
 					getCircuitArtifactPath(CircuitArtifact.R1CS, circuitName, hre),
@@ -69,7 +70,7 @@ task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 					preZKey,
 					getCircuitArtifactPath(CircuitArtifact.ZKEY, circuitName, hre),
 					undefined,
-					"0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+					beacon === undefined ? crypto.randomBytes(32).toString("hex") : beacon,
 					10,
 				)
 			}

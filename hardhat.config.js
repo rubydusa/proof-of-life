@@ -52,6 +52,7 @@ module.exports = {
 			},
 			"Gol4x4": {
 				protocol: "groth16",
+				beacon: "0000000000000000000000000000000000000000000000000000000000000000",
 				version: "2.0.8",
 				path: "circuits/gol.circom",
 				componentName: "GoL",
@@ -60,6 +61,7 @@ module.exports = {
 			},
 			"Gol3N4x4": {
 				protocol: "groth16",
+				beacon: "0000000000000000000000000000000000000000000000000000000000000000",
 				version: "2.0.8",
 				path: "circuits/goln.circom",
 				componentName: "GoLN",
