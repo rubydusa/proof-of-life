@@ -1,11 +1,22 @@
 require("./tasks.js");
 
 module.exports = {
-	solidity: "0.8.17",
+	solidity: {
+		compilers: [
+			{
+				version: "0.8.17",
+			},
+			{
+				version: "0.6.11",
+			},
+		],
+	},
 	circom: {
 		outDir: "artifacts/circom",  // relative to root path
 		verifierOutDir: "verifiers",  // relative to sources path
-		plonk: "circuits/powersOfTau28_hez_final_13.ptau",  // relative to root path
+
+		protocol: "groth16",
+		phase1: "circuits/powersOfTau28_hez_final_13.ptau",  // relative to root path
 		options: "--r1cs --wasm",
 		circuits: {
 			"CreateBitMatrix4x4": {
