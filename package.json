@@ -11,7 +11,6 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
     "bn.js": "^5.2.1",
-    "chai-as-promised": "^7.1.1",
     "circomlib": "^2.0.5",
     "snarkjs": "^0.5.0",
     "tmp": "^0.2.1"
@@ -20,6 +19,7 @@
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@nomiclabs/hardhat-ethers": "^2.1.1",
     "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
     "hardhat": "^2.11.2",
     "mocha": "^10.0.0"
   }
