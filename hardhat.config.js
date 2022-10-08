@@ -15,11 +15,11 @@ module.exports = {
 		outDir: "artifacts/circom",  // relative to root path
 		verifierOutDir: "verifiers",  // relative to sources path
 
-		protocol: "groth16",
 		phase1: "circuits/powersOfTau28_hez_final_13.ptau",  // relative to root path
 		options: "--r1cs --wasm",
 		circuits: {
 			"CreateBitMatrix4x4": {
+				protocol: "plonk",
 				version: "2.0.8",
 				path: "circuits/bitMatrix.circom",
 				componentName: "CreateBitMatrix",
@@ -27,6 +27,7 @@ module.exports = {
 				args: [4, 4],
 			},
 			"DeconstructBitMatrix4x4": {
+				protocol: "plonk",
 				version: "2.0.8",
 				path: "circuits/bitMatrix.circom",
 				componentName: "DeconstructBitMatrix",
@@ -34,6 +35,7 @@ module.exports = {
 				args: [4, 4],
 			},
 			"CreateBitMatrix6x4": {
+				protocol: "plonk",
 				version: "2.0.8",
 				path: "circuits/bitMatrix.circom",
 				componentName: "CreateBitMatrix",
@@ -41,6 +43,7 @@ module.exports = {
 				args: [6, 4],
 			},
 			"DeconstructBitMatrix6x4": {
+				protocol: "plonk",
 				version: "2.0.8",
 				path: "circuits/bitMatrix.circom",
 				componentName: "DeconstructBitMatrix",
@@ -48,6 +51,7 @@ module.exports = {
 				args: [6, 4],
 			},
 			"Gol4x4": {
+				protocol: "groth16",
 				version: "2.0.8",
 				path: "circuits/gol.circom",
 				componentName: "GoL",
@@ -55,6 +59,7 @@ module.exports = {
 				args: [4, 4],
 			},
 			"Gol3N4x4": {
+				protocol: "groth16",
 				version: "2.0.8",
 				path: "circuits/goln.circom",
 				componentName: "GoLN",

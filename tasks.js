@@ -35,7 +35,7 @@ const CircuitArtifact = Object.freeze({
 
 task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 	.setAction(async (_args, hre, _runSuper) => {
-		const { options, circuits, protocol } = hre.userConfig.circom;
+		const { options, circuits } = hre.userConfig.circom;
 		for (const [circuitName, circuitObject] of Object.entries(circuits)) {
 			// setup circom circuit file
 			const circuitOutDirectory = getCircuitArtifactPath(CircuitArtifact.DIR, circuitName, hre);
@@ -49,6 +49,7 @@ task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 			execSync(`circom ${options} -o ${circuitOutDirectory} ${circuitCompilePath}`);
 
 			// generate zkey
+			const { protocol } = circuitObject;
 			if (protocol === PLONK) {
 				await snarkjs.plonk.setup(
 					getCircuitArtifactPath(CircuitArtifact.R1CS, circuitName, hre),
@@ -103,7 +104,7 @@ task(TASK_COMPILE, "hook compile task to include circuit compilation")
 
 extendEnvironment((hre) => {
 	const getVerifierFactory = async (circuitName) => {
-		const { protocol } = hre.userConfig.circom;
+		const { protocol } = circuitObjectFromName(circuitName, hre);
 
 		let verifierName;
 		if (protocol === PLONK) {
@@ -122,7 +123,7 @@ extendEnvironment((hre) => {
 	}
 
 	const generateProof = async (circuitName, input) => {
-		const { protocol } = hre.userConfig.circom;
+		const { protocol } = circuitObjectFromName(circuitName, hre);
 
 		const wasmPath = getCircuitArtifactPath(CircuitArtifact.WASM, circuitName, hre);
 		const zkeyPath = getCircuitArtifactPath(CircuitArtifact.ZKEY, circuitName, hre);
@@ -139,7 +140,7 @@ extendEnvironment((hre) => {
 	}
 
 	const verifyProof = async (circuitName, { proof, publicSignals }) => {
-		const { protocol } = hre.userConfig.circom;
+		const { protocol } = hre.userConfig.circom.circuits[circuitName];
 		const zkeyPath = getCircuitArtifactPath(CircuitArtifact.ZKEY, circuitName, hre);
 
 		if (protocol === PLONK) {
@@ -156,7 +157,7 @@ extendEnvironment((hre) => {
 	}
 
 	const generateCalldata = async (circuitName, input) => {
-		const { protocol } = hre.userConfig.circom;
+		const { protocol } = hre.userConfig.circom.circuits[circuitName];
 		const { proof, publicSignals } = hre.circom.generateProof(circuitName, input)
 
 		if (protocol === PLONK) {
@@ -231,6 +232,8 @@ const circuitObjectCode = (circuitObject, hre) => {
 		mainComponenetString
 	].join("\n");
 }
+
+const circuitObjectFromName = (circuitName, hre) => hre.userConfig.circom.circuits[circuitName];
 
 /*
  * Load
