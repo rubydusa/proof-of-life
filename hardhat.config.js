@@ -1,3 +1,4 @@
+require("@nomiclabs/hardhat-ethers");
 require("./tasks.js");
 
 module.exports = {
@@ -67,6 +68,15 @@ module.exports = {
 				componentName: "GoLN",
 				publicSignals: [],
 				args: [3, 4, 4],
+			},
+			"Main4x4": {
+				protocol: "groth16",
+				beacon: "0000000000000000000000000000000000000000000000000000000000000000",
+				version: "2.0.8",
+				path: "circuits/main.circom",
+				componentName: "Main",
+				publicSignals: ["address"],
+				args: [1, 4, 4],
 			}
 		}
 	}

@@ -21,6 +21,7 @@ template Main(n, W, H) {
 		hasher.inputs[i] <== data[i];
 	}
 	hasher.inputs[k] <== address;
+	hash <== hasher.out;
 
 	// convert data to bit matrix
 	component dataMatrix = CreateBitMatrix(W, H);
