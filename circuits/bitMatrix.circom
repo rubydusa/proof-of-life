@@ -14,7 +14,7 @@ template CreateBitMatrix(W, H) {
 
 	component nums2Bits[k];
 	for (var i = 0; i < k; i++) {
-		var size = i == k - 1 || k == 1 ? s : 254;
+		var size = i == k - 1 ? s : 254;
 		nums2Bits[i] = Num2Bits(size);
 		nums2Bits[i].in <== in[i];
 	}
