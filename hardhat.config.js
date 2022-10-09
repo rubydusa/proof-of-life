@@ -77,7 +77,16 @@ module.exports = {
 				componentName: "Main",
 				publicSignals: ["address"],
 				args: [1, 4, 4],
-			}
+			},
+			"Main16x16": {
+				protocol: "groth16",
+				beacon: "0000000000000000000000000000000000000000000000000000000000000000",
+				version: "2.0.8",
+				path: "circuits/main.circom",
+				componentName: "Main",
+				publicSignals: ["address"],
+				args: [1, 16, 16],
+			},
 		}
 	}
 };
