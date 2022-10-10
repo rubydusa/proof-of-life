@@ -12,15 +12,20 @@ template Main(n, W, H) {
 	signal input address; // public
 	signal input data[k]; // private
 	
+	signal output solutionHash;
 	signal output hash;
 	signal output out[k];
 
 	// hash
-	component hasher = Poseidon(k + 1);
+	component solutionHasher = Poseidon(k);
+	component hasher = Poseidon(2);
 	for (var i = 0; i < k; i++) {
-		hasher.inputs[i] <== data[i];
+		solutionHasher.inputs[i] <== data[i];
 	}
-	hasher.inputs[k] <== address;
+	hasher.inputs[0] <== solutionHasher.out;
+	hasher.inputs[1] <== address;
+
+	solutionHash <== solutionHasher.out;
 	hash <== hasher.out;
 
 	// convert data to bit matrix
