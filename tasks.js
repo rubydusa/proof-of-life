@@ -159,7 +159,7 @@ extendEnvironment((hre) => {
 
 	const generateCalldata = async (circuitName, input) => {
 		const { protocol } = hre.userConfig.circom.circuits[circuitName];
-		const { proof, publicSignals } = hre.circom.generateProof(circuitName, input)
+		const { proof, publicSignals } = await hre.circom.generateProof(circuitName, input)
 
 		if (protocol === PLONK) {
 			return await snarkjs.plonk.exportSolidityCallData(proof, publicSignals);
