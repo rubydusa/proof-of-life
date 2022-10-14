@@ -118,9 +118,7 @@ extendEnvironment((hre) => {
 			throw new HardhatError(`Invalid protocol name: ${protocol}`);
 		}
 
-		return await hre.artifacts.readArtifact(
-			verifierName
-		);
+		return await hre.ethers.getContractFactory(verifierName);
 	}
 
 	const generateProof = async (circuitName, input) => {
@@ -162,10 +160,12 @@ extendEnvironment((hre) => {
 		const { proof, publicSignals } = await hre.circom.generateProof(circuitName, input)
 
 		if (protocol === PLONK) {
-			return await snarkjs.plonk.exportSolidityCallData(proof, publicSignals);
+			const rawCalldata = await snarkjs.plonk.exportSolidityCallData(proof, publicSignals);
+			return JSON.parse(`[${rawCalldata}]`);
 		}
 		else if (protocol === GROTH16) {
-			return await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
+			const rawCalldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
+			return JSON.parse(`[${rawCalldata}]`);
 		}
 		else {
 			throw new HardhatError(`Invalid protocol name: ${protocol}`);
@@ -210,9 +210,9 @@ const getCircuitArtifactPath = (artifactType, circuitName, hre) => {
 		case CircuitArtifact.VERIFIER_CONTRACT:
 			return `${verifierDir}/${verifierContractName}.sol`;
 		case CircuitArtifact.PLONK_VERIFIER_FULLY_QUALIFIED_NAME:
-			return `${path.basename(sources)}/${verifierDir}/${verifierContractName}.sol:PlonkVerifier`;
+			return `${path.basename(sources)}/${config.verifierOutDir}/${verifierContractName}.sol:PlonkVerifier`;
 		case CircuitArtifact.GROTH16_VERIFIER_FULLY_QUALIFIED_NAME:
-			return `${path.basename(sources)}/${verifierDir}/${verifierContractName}.sol:Verifier`;
+			return `${path.basename(sources)}/${config.verifierOutDir}/${verifierContractName}.sol:Verifier`;
 		default:
 			throw new Error("Invalid artifactType");
 	}
