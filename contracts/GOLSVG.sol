@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract GOLSVG {
 	uint256 constant P = 40;  // probability in precentage
-	uint256 constant R = 12; // rounds
+	uint256 constant R = 6; // rounds
 	uint256 constant D = 600; // duration in milliseconds
 
 	uint256 constant W = 10; // width per cell
@@ -19,6 +19,50 @@ contract GOLSVG {
 
     using Strings for uint256;
 
+	function svgGen(
+		uint256 solutionHash,
+		uint256 result,
+		uint256 width,
+		uint256 height
+	)
+	public pure returns (string memory)
+	{
+		string memory rects = "";
+
+		for (uint256 x = 0; x < width; x++) {
+			for (uint256 y = 0; y < height; y++) {
+				bool f = ((result >> (y + x * width)) & 1) == 1;
+				rects = string.concat(
+					rects,
+					recGen(
+						solutionHash,
+						x,
+						y,
+						f
+					)
+				);
+			}
+		}
+
+		string[] memory values = new string[](4);
+		values[0] = "0";
+		values[1] = "0";
+		values[2] = ((width + 2) * W).toString();
+		values[3] = ((height + 2) * H).toString();
+
+		return string.concat(
+			'<svg',
+			attribute("viewbox", join(values, " ")),
+			'>',
+			rects,
+			'</svg>'
+		);
+	}
+
+	// x is before multiplication by W
+	// y is before multiplication by H
+	// actual x = (x + 1) * W;
+	// actual y = (y + 1) * H;
 	function recGen(
 		uint256 solutionHash,
 		uint256 x, 
@@ -111,8 +155,8 @@ contract GOLSVG {
 
         return string.concat(
 			'<rect',
-			attribute("x", x.toString()),
-			attribute("y", y.toString()),
+			attribute("x", ((x + 1) * W).toString()),
+			attribute("y", ((y + 1) * H).toString()),
 			attribute("width", W.toString()),
 			attribute("height", H.toString()),
 			attribute("fill", WHITE),
@@ -158,4 +202,3 @@ contract GOLSVG {
 		return uint256(keccak256(abi.encodePacked(solutionHash, x, y, round))) % 100 < P;
 	}
 }
-
