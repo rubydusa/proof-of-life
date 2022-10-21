@@ -159,16 +159,19 @@ def get_contract_code(c: Config) -> str:
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract GOLSVG {{
+    uint256 constant W = {c.GW};
+    uint256 constant H = {c.GH};
+
     using Strings for uint256;
 
     string constant SVG_A = \'{svg_a}\';
     string constant SVG_B = \'{svg_b}\';
 
-    function svg(uint256 n, uint8[] calldata cells) external pure returns (string memory) {{
+    function svg(uint256 n, uint256 data) external pure returns (string memory) {{
         return string.concat(
             SVG_A,
             grid(),
-            end(cells),
+            end(data),
             text(n),
             SVG_B
         );
@@ -177,23 +180,22 @@ contract GOLSVG {{
     string constant END_A = \'{end_a}\';
     string constant END_B = \'{end_b}\';
 
-    function end(uint8[] calldata cells) public pure returns (string memory) {{
+    function end(uint256 data) public pure returns (string memory) {{
         string memory accm = "";
 
-        uint256 length = cells.length / 2;
-        for (uint256 i = 0; i < length; i++) {{
-            uint256 ii = i * 2;
-            uint256 a = cells[ii];
-            uint256 b = cells[ii + 1];
-
-            accm = string.concat(
-                accm,
-                END_A,
-                a.toString(),
-                '-',
-                b.toString(),
-                END_B
-            );
+        for (uint256 x = 0; x < W; x++) {{
+            for (uint256 y = 0; y < H; y++) {{
+                if ((data >> (y + x * W)) & 1 == 1) {{
+                    accm = string.concat(
+                        accm,
+                        END_A,
+                        x.toString(),
+                        '-',
+                        y.toString(),
+                        END_B
+                    );
+                }}
+            }}
         }}
 
         return accm;
