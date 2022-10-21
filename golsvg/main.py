@@ -22,6 +22,14 @@ class Config:
     BLACK: str
     PURPLE: str
 
+    @property
+    def TOTAL_WIDTH(self):
+        return self.CW * (self.GW + 2)
+
+    @property
+    def TOTAL_HEIGHT(self):
+        return self.CH * (self.GH + 2)
+
 def default_config() -> Config:
     return Config(
         R=12,
@@ -119,11 +127,9 @@ Text
 
 def create_text_template(c: Config) -> tuple[str, str]:
     font_size = (c.CH * 4) // 5
-    total_width = (c.CW * (c.GW + 2))
-    total_height = (c.CH * (c.GH + 2))
-    x = total_width // 2
+    x = c.TOTAL_WIDTH // 2
 
-    a = f'<text font-family="monospace"text-anchor="middle"x="{x}"y="{total_height}"width="{total_width}"font-size="{font_size}">#'
+    a = f'<text font-family="monospace"text-anchor="middle"x="{x}"y="{c.TOTAL_HEIGHT}"width="{c.TOTAL_WIDTH}"font-size="{font_size}">#'
     b = f'</text>'
 
     return a, b
@@ -133,9 +139,7 @@ Main wrapper
 '''
 
 def create_svg_wrap(c: Config) -> tuple[str, str]:
-    total_width = (c.CW * (c.GW + 2))
-    total_height = (c.CH * (c.GH + 2))
-    a = f'<svg viewBox="0 0 {total_width} {total_height}">'
+    a = f'<svg viewBox="0 0 {c.TOTAL_WIDTH} {c.TOTAL_HEIGHT}">'
     b = f'</svg>'
 
     return a, b
