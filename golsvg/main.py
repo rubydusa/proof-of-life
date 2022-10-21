@@ -37,6 +37,7 @@ def default_config() -> Config:
         PURPLE="#7232f2"
     )
 
+# make generation determinstic
 def initialize_env() -> None:
     seed(SEED)
 
@@ -149,26 +150,23 @@ def get_contract_code(c: Config) -> str:
     end_a, end_b = create_end_animation(c)
     text_a, text_b = create_text_template(c)
 
-    return f'''
-pragma solidity ^0.8.12;
+    return f'''pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract GOLSVG {{
     using Strings for uint256;
 
-    function grid() public pure returns (string memory) {{
-        return \'{grid}\';
-    }}
+    string constant SVG_A = \'{svg_a}\';
+    string constant SVG_B = \'{svg_b}\';
 
-    string constant TEXT_A = \'{text_a}\';
-    string constant TEXT_B = \'{text_b}\';
-
-    function text(uint256 n) public pure returns (string memory) {{
+    function svg(uint256 n, uint8[] calldata cells) external pure returns (string memory) {{
         return string.concat(
-            TEXT_A,
-            n.toString(),
-            TEXT_B
+            SVG_A,
+            grid(),
+            end(cells),
+            text(n),
+            SVG_B
         );
     }}
 
@@ -197,17 +195,19 @@ contract GOLSVG {{
         return accm;
     }}
 
-    string constant SVG_A = \'{svg_a}\';
-    string constant SVG_B = \'{svg_b}\';
+    string constant TEXT_A = \'{text_a}\';
+    string constant TEXT_B = \'{text_b}\';
 
-    function svg(uint256 n, uint8[] calldata cells) external pure returns (string memory) {{
+    function text(uint256 n) public pure returns (string memory) {{
         return string.concat(
-            SVG_A,
-            grid(),
-            end(cells),
-            text(n),
-            SVG_B
+            TEXT_A,
+            n.toString(),
+            TEXT_B
         );
+    }}
+
+    function grid() public pure returns (string memory) {{
+        return \'{grid}\';
     }}
 }}
 '''
@@ -216,7 +216,8 @@ def main():
     initialize_env()
     c = default_config()
 
-    print(get_contract_code(c))
+    with open('GOLSVG.sol', 'w') as f:
+        f.write(get_contract_code(c))
 
 if __name__ == "__main__":
     main()
