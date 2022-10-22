@@ -2,6 +2,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
+interface IRandom {
+    function random(uint256 salt) external view returns (uint256);
+}
+
 interface IGroth16Verifier {
     function verifyProof(
 		uint256[2] memory a,
@@ -12,14 +16,35 @@ interface IGroth16Verifier {
 }
 
 contract GOLNFT is ERC721Enumerable {
-    uint256 public prizenum; // 10088
-    mapping(uint256 => bool) public proofs;
+    uint256 immutable public W;
+    uint256 immutable public H;
+    uint256 immutable public EXPR;
+
+    uint256 public prizenum;
+    uint256 public lastPrizenumUpdate;
 
     IGroth16Verifier public verifier;
+    IRandom public random;
 
-    constructor(uint256 _prizenum, address _verifier) ERC721("Game Of Life ZKNFT", "GOLZK") {
-        prizenum = _prizenum;
+    mapping(uint256 => bool) public proofs;
+    mapping(uint256 => uint256) public tokenId2prizenum;
+
+    constructor(address _verifier, address _random, uint256 _W, uint256 _H, uint256 _EXPR) ERC721("Game Of Life ZKNFT", "GOLZK") {
 		verifier = IGroth16Verifier(_verifier);
+        random = IRandom(_random);
+
+        W = _W;
+        H = _H;
+        EXPR = _EXPR;
+
+        _updatePrizenum();
+    }
+
+    modifier updatePrizenum() {
+        _;
+        if (block.timestamp - lastPrizenumUpdate >= EXPR) {
+            _updatePrizenum();
+        }
     }
 
 	function mint(
@@ -28,22 +53,29 @@ contract GOLNFT is ERC721Enumerable {
 		uint256[2] memory a,
 		uint256[2][2] memory b,
 		uint256[2] memory c
-	) external {
+	) external updatePrizenum() {
 		require(!proofs[solutionHash], "GOLNFT: Solution already exists!");
 
 		require(verifier.verifyProof(a, b, c, [
             solutionHash,
             hash,
             prizenum,
-            address2uint256(msg.sender)
+            uint256(uint160((msg.sender)))
         ]), "GOLNFT: Invalid proof");
 
-		_safeMint(msg.sender, totalSupply());
-		proofs[solutionHash] = true;
+        _golMint(msg.sender, solutionHash);
 	}
 
-    function address2uint256(address addr) public pure returns (uint256) {
-        return uint256(uint160(addr));
+    function _golMint(address receiver, uint256 solutionHash) internal {
+        uint256 tokenId = totalSupply();
+
+        _safeMint(receiver, tokenId);
+        proofs[solutionHash] = true;
+        tokenId2prizenum[tokenId] = prizenum;
+    }
+
+    function _updatePrizenum() internal {
+        prizenum = random.random(block.number) % (2 ** (W * H));
+        lastPrizenumUpdate = block.timestamp;
     }
 }
-

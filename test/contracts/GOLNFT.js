@@ -1,5 +1,8 @@
 const hre = require("hardhat");
 const chai = require("chai");
+const helpers = require("@nomicfoundation/hardhat-network-helpers");
+
+const { ethers } = hre;
 
 const ERROR_MSG = {
 	INVALID_PROOF: "GOLNFT: Invalid proof",
@@ -7,105 +10,151 @@ const ERROR_MSG = {
 }
 
 describe("GOLNFT", () => {
-	const CIRCUIT_NAME = "Main4x4";
-	const PRIZENUM = "10088";
+	const W = "8";
+	const H = "8";
+	const EXPR = "86400";
+
+	const CIRCUIT_NAME = "Main3N8x8";
+	const PRIZENUM = "14520449625737667765";
 	const USER_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 	const ATTACKER_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 
-	const VALID_DATA = ["41261"];  // solution to 10088
+	const VALID_DATA = ["7203617452961438741"];  // solution to prizenum
 	const VALID_ADDRESS = "1390849295786071768276380950238675083608645509734";
 
+	const PRIZENUM2 = "2887490257366876950";
+	const VALID_DATA2 = "18142979013735226945";
+
+	let random;
 	let verifier;
 	let golNFT;
 
 	let attacker;
 
+	const mint = async ({data, address}, from) => {
+		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, {data, address});
+		const golNFTWithSender = from ? golNFT.connect(from) : golNFT;
+		await golNFTWithSender.mint(solutionHash, hash, a, b, c);
+	};
+
 	beforeEach(async () => {
-		const user = await hre.ethers.getSigner(USER_ADDRESS);
-		attacker = await hre.ethers.getSigner(ATTACKER_ADDRESS);
+		const user = await ethers.getSigner(USER_ADDRESS);
+		attacker = await ethers.getSigner(ATTACKER_ADDRESS);
+
+		const Random = await ethers.getContractFactory("Random");
+		random = await Random.deploy();
+		await random.setVal(PRIZENUM);
 
 		const Verifier = (await hre.circom.getVerifierFactory(CIRCUIT_NAME)).connect(user);
 		verifier = await Verifier.deploy();
 
-		const GOLNFT = (await hre.ethers.getContractFactory("GOLNFT")).connect(user);
-		golNFT = await GOLNFT.deploy(PRIZENUM, verifier.address);
+		const GOLNFT = (await ethers.getContractFactory("GOLNFT")).connect(user);
+		golNFT = await GOLNFT.deploy(verifier.address, random.address, W, H, EXPR);
 	});
 
-	it("Valid All", async () => {
-		const input = {
-			data: VALID_DATA,  
-			address: VALID_ADDRESS,
-		};
+	describe("Base Tests", () => {
+		it("Valid All", async () => {
+			const input = {
+				data: VALID_DATA,  
+				address: VALID_ADDRESS,
+			};
 
-		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, input);
-		await golNFT.mint(solutionHash, hash, a, b, c);
-		
-		chai.expect(await golNFT.ownerOf("0")).to.be.eq(USER_ADDRESS);
+			await mint(input);
+			
+			chai.expect(await golNFT.ownerOf("0")).to.be.eq(USER_ADDRESS);
+		});
+
+		it("Invalid Grid Data", async () => {
+			const input = {
+				data: ["12345"], 
+				address: VALID_ADDRESS,
+			};
+
+			await chai.expect(mint(input)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
+		});
+
+		it("Invalid Address", async () => {
+			const input = {
+				data: VALID_DATA, 
+				address: "12345",
+			};
+
+			await chai.expect(mint(input)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
+		});
+
+		// can't frontrun transactions
+		it("Invalid Sender", async () => {
+			const input = {
+				data: VALID_DATA,
+				address: VALID_ADDRESS,
+			};
+
+			await chai.expect(mint(input, attacker)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
+		});
+
+		// can't mint twice with the same hash
+		it("Solution Hash Exists", async () => {
+			const input = {
+				data: VALID_DATA,
+				address: VALID_ADDRESS,
+			};
+
+			await mint(input);
+			await chai.expect(mint(input)).to.be.revertedWith(ERROR_MSG.HASH_EXISTS);
+		});
 	});
 
-	it("Invalid Grid Data", async () => {
-		const input = {
-			data: ["12345"], 
-			address: VALID_ADDRESS,
-		};
+	describe("Prizenum", () => {
+		beforeEach(async () => {
+			await random.setVal(PRIZENUM2);
+		});
 
-		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, input);
-		await chai.expect(golNFT.mint(solutionHash, hash, a, b, c)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
-	});
+		it("Prizenum Updates After Expiration", async () => {
+			await helpers.time.increase(ethers.BigNumber.from(EXPR));
 
-	it("Invalid Address", async () => {
-		const input = {
-			data: VALID_DATA, 
-			address: "12345",
-		};
+			const input = {
+				data: VALID_DATA,  
+				address: VALID_ADDRESS,
+			};
 
-		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, input);
-		await chai.expect(golNFT.mint(solutionHash, hash, a, b, c)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
-	});
+			await mint(input);
+			
+			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
+			chai.expect(await golNFT.prizenum()).to.be.eq(PRIZENUM2);
+		});
 
-	// can't frontrun transactions
-	it("Invalid Sender", async () => {
-		const input = {
-			data: VALID_DATA,
-			address: VALID_ADDRESS,
-		};
+		it("Prizenum Doesn't Update if not Expired", async () => {
+			const input = {
+				data: VALID_DATA,  
+				address: VALID_ADDRESS,
+			};
 
-		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, input);
-		const golNFTAttacker = golNFT.connect(attacker);
-		await chai.expect(golNFTAttacker.mint(solutionHash, hash, a, b, c)).to.be.revertedWith(ERROR_MSG.INVALID_PROOF);
-	});
+			await mint(input);
+			
+			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
+			chai.expect(await golNFT.prizenum()).to.be.eq(PRIZENUM);
+		});
 
-	// can't mint twice with the same hash
-	it("Solution Hash Exists", async () => {
-		const input = {
-			data: VALID_DATA,
-			address: VALID_ADDRESS,
-		};
+		it("Minting Works After Prizenum Changes", async () => {
+			await helpers.time.increase(ethers.BigNumber.from(EXPR));
 
-		const [a, b, c, [solutionHash, hash]] = await hre.circom.generateCalldata(CIRCUIT_NAME, input);
-		await golNFT.mint(solutionHash, hash, a, b, c);
-		await chai.expect(golNFT.mint(solutionHash, hash, a, b, c)).to.be.revertedWith(ERROR_MSG.HASH_EXISTS);
-	});
+			const input = {
+				data: VALID_DATA,  
+				address: VALID_ADDRESS,
+			};
 
-	it("Second Solution", async () => {
-		const firstInput = {
-			data: VALID_DATA,
-			address: VALID_ADDRESS,
-		};
+			await mint(input);
 
-		const [a0, b0, c0, [solutionHash0, hash0]] = await hre.circom.generateCalldata(CIRCUIT_NAME, firstInput);
-		await golNFT.mint(solutionHash0, hash0, a0, b0, c0);
-		
-		chai.expect(await golNFT.ownerOf("0")).to.be.eq(USER_ADDRESS);
+			const input2 = {
+				data: VALID_DATA2,
+				address: VALID_ADDRESS,
+			}
 
-		const secondInput = {
-			data: ["42377"],
-			address: VALID_ADDRESS,
-		};
-
-		const [a1, b1, c1, [solutionHash1, hash1]] = await hre.circom.generateCalldata(CIRCUIT_NAME, secondInput);
-		await golNFT.mint(solutionHash1, hash1, a1, b1, c1);
-		
-		chai.expect(await golNFT.ownerOf("1")).to.be.eq(USER_ADDRESS);
+			await mint(input2);
+			
+			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
+			chai.expect(await golNFT.tokenId2prizenum("1")).to.be.eq(PRIZENUM2);
+			chai.expect(await golNFT.ownerOf("1")).to.be.eq(USER_ADDRESS);
+		});
 	});
 });
