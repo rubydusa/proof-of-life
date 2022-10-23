@@ -7,6 +7,7 @@ const { ethers } = hre;
 const ERROR_MSG = {
 	INVALID_PROOF: "GOLNFT: Invalid proof",
 	HASH_EXISTS: "GOLNFT: Solution already exists!",
+	INVALID_TOKENID: "GOLNFT: TokenID does not exist!"
 }
 
 describe("GOLNFT", () => {
@@ -27,6 +28,7 @@ describe("GOLNFT", () => {
 
 	let random;
 	let verifier;
+	let golSVG;
 	let golNFT;
 
 	let attacker;
@@ -41,15 +43,18 @@ describe("GOLNFT", () => {
 		const user = await ethers.getSigner(USER_ADDRESS);
 		attacker = await ethers.getSigner(ATTACKER_ADDRESS);
 
-		const Random = await ethers.getContractFactory("Random");
+		const Random = (await ethers.getContractFactory("Random")).connect(user);
 		random = await Random.deploy();
 		await random.setVal(PRIZENUM);
 
 		const Verifier = (await hre.circom.getVerifierFactory(CIRCUIT_NAME)).connect(user);
 		verifier = await Verifier.deploy();
 
+		const GOLSVG = (await ethers.getContractFactory("GOLSVG")).connect(user);
+		golSVG = await GOLSVG.deploy();
+
 		const GOLNFT = (await ethers.getContractFactory("GOLNFT")).connect(user);
-		golNFT = await GOLNFT.deploy(verifier.address, random.address, W, H, EXPR);
+		golNFT = await GOLNFT.deploy(verifier.address, random.address, golSVG.address, W, H, EXPR);
 	});
 
 	describe("Base Tests", () => {
@@ -155,6 +160,23 @@ describe("GOLNFT", () => {
 			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
 			chai.expect(await golNFT.tokenId2prizenum("1")).to.be.eq(PRIZENUM2);
 			chai.expect(await golNFT.ownerOf("1")).to.be.eq(USER_ADDRESS);
+		});
+	});
+
+	describe("SVG", () => {
+		it("Works for a valid tokenId", async () => {
+			const input = {
+				data: VALID_DATA,  
+				address: VALID_ADDRESS,
+			};
+
+			await mint(input);
+
+			chai.expect(await golNFT.tokenURI("0")).to.not.be.empty;
+		});
+
+		it("Doesn't work for a non valid tokenId", async () => {
+			await chai.expect(golNFT.tokenURI("0")).to.be.revertedWith(ERROR_MSG.INVALID_TOKENID);
 		});
 	});
 });

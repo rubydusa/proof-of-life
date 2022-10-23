@@ -1,6 +1,11 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+
+interface IGOLSVG {
+    function svg(uint256 n, uint256 data) external pure returns (string memory);
+}
 
 interface IRandom {
     function random(uint256 salt) external view returns (uint256);
@@ -25,13 +30,15 @@ contract GOLNFT is ERC721Enumerable {
 
     IGroth16Verifier public verifier;
     IRandom public random;
+    IGOLSVG public svg;
 
     mapping(uint256 => bool) public proofs;
     mapping(uint256 => uint256) public tokenId2prizenum;
 
-    constructor(address _verifier, address _random, uint256 _W, uint256 _H, uint256 _EXPR) ERC721("Game Of Life ZKNFT", "GOLZK") {
+    constructor(address _verifier, address _random, address _svg, uint256 _W, uint256 _H, uint256 _EXPR) ERC721("Game Of Life ZKNFT", "GOLZK") {
 		verifier = IGroth16Verifier(_verifier);
         random = IRandom(_random);
+        svg = IGOLSVG(_svg);
 
         W = _W;
         H = _H;
@@ -40,11 +47,20 @@ contract GOLNFT is ERC721Enumerable {
         _updatePrizenum();
     }
 
+	modifier tokenIdExists(uint256 tokenId) {
+		require(_exists(tokenId), "GOLNFT: TokenID does not exist!");
+		_;
+	}
+
     modifier updatePrizenum() {
         _;
         if (block.timestamp - lastPrizenumUpdate >= EXPR) {
             _updatePrizenum();
         }
+    }
+
+    function tokenURI(uint256 tokenId) public view override tokenIdExists(tokenId) returns (string memory) {
+        return string.concat("data:image/svg+xml;base64,", svg.svg(tokenId, tokenId2prizenum[tokenId]));
     }
 
 	function mint(
