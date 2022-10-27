@@ -1,4 +1,5 @@
 import produce from "immer";
+import { ethers, BigNumber } from "ethers";
 
 const mod = (n, m) => {
     return ((n % m) + m) % m;
@@ -38,4 +39,34 @@ export const runSimulationStep = (grid) => {
             }
         }
     });
+}
+
+export const gridToNum = (grid) => {
+    const { rowCount, colCount } = gridDims(grid);
+
+    let sum = BigNumber.from(0);
+    for (let y = 0; y < rowCount; y++) {
+        for (let x = 0; x < colCount; x++) {
+            const bit = BigNumber.from(2).pow(y + x * rowCount);
+            sum = sum.add(bit.mul(grid[y][x]));
+        }
+    }
+    
+    return sum;
+}
+
+export const numToGrid = (num, {rowCount, colCount}) => {
+    const grid = emptyGrid({rowCount, colCount});
+
+    const n = BigNumber.from(num);
+    const one = BigNumber.from(1);
+
+    for (let y = 0; y < rowCount; y++) {
+        for (let x = 0; x < colCount; x++) {
+            const offset = y + x * rowCount;
+            grid[y][x] = n.shr(offset).and(one).toNumber();
+        }
+    }
+    
+    return grid
 }
