@@ -3,6 +3,9 @@ import { emptyGrid, flipCell, runSimulationStep, gridToNum, numToGrid } from "./
 
 import Grid from "./components/Grid";
 
+const snarkjs = window.snarkjs;
+
+const CIRCUIT_PATH = "snark/Main3N8x8";
 const ROW_COUNT = 8;
 const COL_COUNT = 8;
 const GRID_SETTINGS = { rowCount: ROW_COUNT, colCount: COL_COUNT };
@@ -53,6 +56,18 @@ function App() {
       }}>
         <Grid grid={grid} rowCount={ROW_COUNT} colCount={COL_COUNT} onClickHandler={onCellClickHandler}/>
       </div>
+      <button 
+        onClick={async () => {
+          const { proof, publicSignals} = await snarkjs.groth16.fullProve(
+            { data: [gridToNum(grid).toString()], address: "0"}, 
+            `${CIRCUIT_PATH}.wasm`, 
+            `${CIRCUIT_PATH}.zkey`
+          );
+
+          console.log({ proof, publicSignals });
+        }}>
+        Generate Proof!
+      </button>
     </>
   );
 }
