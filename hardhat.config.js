@@ -2,7 +2,17 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomicfoundation/hardhat-chai-matchers");
 require("./tasks.js");
 
+require("dotenv").config();
+
 module.exports = {
+	networks: {
+		hardhat: {
+		},
+		goerli: {
+			url: "https://rpc.ankr.com/eth_goerli",
+			accounts: [process.env.DEPLOYER_KEY]
+		}
+	},
 	solidity: {
 		compilers: [
 			{
