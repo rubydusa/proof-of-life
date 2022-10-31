@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 interface IGOLSVG {
@@ -21,7 +22,7 @@ interface IGroth16Verifier {
     ) external view returns (bool r);
 }
 
-contract GOLNFT is ERC721Enumerable {
+contract GOLNFT is Ownable, ERC721Enumerable {
     uint256 immutable public W;
     uint256 immutable public H;
     uint256 immutable public EXPR;
@@ -70,7 +71,7 @@ contract GOLNFT is ERC721Enumerable {
 		uint256[2] memory a,
 		uint256[2][2] memory b,
 		uint256[2] memory c
-	) external updatePrizenum() {
+	) external updatePrizenum {
 		require(!proofs[solutionHash], "GOLNFT: Solution already exists!");
 
 		require(verifier.verifyProof(a, b, c, [
@@ -82,6 +83,11 @@ contract GOLNFT is ERC721Enumerable {
 
         _golMint(msg.sender, solutionHash);
 	}
+    
+    // available in case current prizenum doesn't have a solution
+    function updateExpiredPrizenum() external updatePrizenum {}
+    // for testing purposes only - renounce ownership after minting example nfts
+    function updatePrizenumOwner() external onlyOwner { _updatePrizenum(); }
 
     function _golMint(address receiver, uint256 solutionHash) internal {
         uint256 tokenId = totalSupply();
