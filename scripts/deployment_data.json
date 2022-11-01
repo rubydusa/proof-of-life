@@ -3,7 +3,7 @@
     "deploymentGasCost": "6408770702425",
     "contracts": {
         "golRandom": {
-            "address": "0xa860612c677aFF139ADf67Dee01CF2D66560896F"
+            "address": "0x08e54bB4804D1f2A391C6D2892cdE9A4E84C68dc"
         },
         "golSVG": {
             "address": "0x8a1674c1d6EAEE3bd6A24042AF22da3c0586c824"
@@ -12,7 +12,7 @@
             "address": "0x7ED4f79D2b3A18e4Ca24E8A389deCABe84AE4551"
         },
         "golNFT": {
-            "address": "0x6A5bA11bfaF1e3EE9247513040b738f0742064b2"
+            "address": "0xC55eaB9D33F3800ff497E3f6A5CBd263233d339f"
         }
     }
 }

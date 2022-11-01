@@ -6,6 +6,9 @@ const W = "8";
 const H = "8";
 const EXPIRY = "84600";
 
+const P = "1";
+const BITS_OUT_OF = "2";
+
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -22,7 +25,7 @@ async function main() {
     
     const preBalance = await deployerAccount.getBalance();
 
-    const golRandom = await GOLRandom.deploy();
+    const golRandom = await GOLRandom.deploy(W, H, P, BITS_OUT_OF);
     await sleep(2000);
     const golSVG = await GOLSVG.deploy();
     await sleep(2000);
