@@ -86,8 +86,8 @@ contract GOLNFT is Ownable, ERC721Enumerable {
     
     // available in case current prizenum doesn't have a solution
     function updateExpiredPrizenum() external updatePrizenum {}
-    // for testing purposes only - renounce ownership after minting example nfts
-    function updatePrizenumOwner() external onlyOwner { _updatePrizenum(); }
+    // for testing purposes only - renounce ownership after minting example nft
+    function setPrizenum(uint256 _prizenum) external onlyOwner { prizenum = _prizenum; }
 
     function _golMint(address receiver, uint256 solutionHash) internal {
         uint256 tokenId = totalSupply();
