@@ -56,13 +56,17 @@ contract GOLNFT is Ownable, ERC721Enumerable {
 
     modifier updatePrizenum() {
         _;
-        if (block.timestamp - lastPrizenumUpdate >= EXPR) {
+        if (isExpired()) {
             _updatePrizenum();
         }
     }
 
     function tokenURI(uint256 tokenId) public view override tokenIdExists(tokenId) returns (string memory) {
         return string.concat("data:image/svg+xml;base64,", svg.svg(tokenId, tokenId2prizenum[tokenId]));
+    }
+    
+    function isExpired() public view returns (bool) {
+        return block.timestamp - lastPrizenumUpdate >= EXPR;
     }
 
 	function mint(

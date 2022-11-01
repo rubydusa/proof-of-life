@@ -4,10 +4,10 @@ const { ethers } = hre;
 
 const W = "8";
 const H = "8";
-const EXPIRY = "84600";
+const EXPIRY = "900";
 
 const P = "1";
-const BITS_OUT_OF = "2";
+const BITS_OUT_OF = "8";
 
 function sleep(ms) {
     return new Promise((resolve) => {
