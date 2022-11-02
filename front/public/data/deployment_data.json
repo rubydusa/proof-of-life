@@ -1,0 +1,18 @@
+{
+    "deployerAddress": "0x1d6990eE5c043Fc41EC785e6a56Bf3a5f5bfe165",
+    "deploymentGasCost": "0",
+    "contracts": {
+        "golRandom": {
+            "address": "0x1584649d9DD6E5B2f5309838Ca5339d99a8A48a9"
+        },
+        "golSVG": {
+            "address": "0x8a1674c1d6EAEE3bd6A24042AF22da3c0586c824"
+        },
+        "golVerifier": {
+            "address": "0xa8bA4bbE96DE3cD1Abf23059AC2AAd60b825Bad4"
+        },
+        "golNFT": {
+            "address": "0x3A5088df7Ce832197EBd4328889a5acE926c0C77"
+        }
+    }
+}

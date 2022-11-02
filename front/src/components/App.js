@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { emptyGrid, flipCell, runSimulationStep, gridToNum, numToGrid } from "./game";
+import { emptyGrid, flipCell, runSimulationStep, gridToNum, numToGrid } from "../game";
 
-import Grid from "./components/Grid";
+import { WagmiConfig } from "wagmi";
+import { client } from "../wagmiClient";
+
+import Grid from "./Grid";
+import ConnectWallet from "./ConnectWallet";
 
 const snarkjs = window.snarkjs;
 
@@ -19,7 +23,8 @@ function App() {
   }
 
   return (
-    <>
+    <WagmiConfig client={client}>
+      <ConnectWallet></ConnectWallet>
       <button 
         onClick={() => {
           setGrid(g => runSimulationStep(g));
@@ -68,7 +73,7 @@ function App() {
         }}>
         Generate Proof!
       </button>
-    </>
+    </WagmiConfig>
   );
 }
 
