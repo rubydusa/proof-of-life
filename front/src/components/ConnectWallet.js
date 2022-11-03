@@ -1,26 +1,29 @@
-import { useConnect } from 'wagmi'
+import { useConnect, useAccount } from 'wagmi'
  
 function ConnectWallet() {
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect()
- 
+  const { isConnected } = useAccount();
+  const { connect, connectors, isLoading, pendingConnector } = useConnect();
+  
+  const connector = connectors[0];
+  
   return (
     <div>
-      {connectors.map((connector) => (
-        <button
-          disabled={!connector.ready}
-          key={connector.id}
-          onClick={() => connect({ connector })}
+      <button 
+        disabled={!connector.ready}
+        key={connector.id}
+        onClick={() => connect({ connector })}
         >
-          {connector.name}
-          {!connector.ready && ' (unsupported)'}
-          {isLoading &&
+          Connect Wallet
+          {
+            isLoading &&
             connector.id === pendingConnector?.id &&
-            ' (connecting)'}
-        </button>
-      ))}
- 
-      {error && <div>{error.message}</div>}
+            ' (connecting)'
+          }
+          {
+            isConnected &&
+            ' (connected)'
+          }
+      </button>
     </div>
   )
 }

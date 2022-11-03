@@ -19,6 +19,7 @@ const { chains, provider, webSocketProvider } = configureChains([chain.goerli], 
 export const client = createClient({
   autoConnect: true,
   connectors: [
+    /*
     new MetaMaskConnector({ chains }),
     new CoinbaseWalletConnector({
       chains,
@@ -32,6 +33,7 @@ export const client = createClient({
         qrcode: true,
       },
     }),
+    */
     new InjectedConnector({
       chains,
       options: {
