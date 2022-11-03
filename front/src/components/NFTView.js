@@ -2,12 +2,10 @@ import { useContractRead, useContractInfiniteReads, paginatedIndexesConfig } fro
 
 import React from 'react'
 import { useState } from 'react';
+import { BigNumber } from 'ethers';
+import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 import '../styles/NFTView.css';
-
-import deploymentData from '../data/deployment_data.json';
-import GOLNFTABI from '../data/abi/GOLNFTABI.json';
-import { BigNumber } from 'ethers';
 
 const ViewOrder = {
   FIRST: 0,  // first to last
@@ -20,11 +18,6 @@ const ViewOwner = {
 }
 
 const PAGESIZE = 2;
-
-const GOLNFTContractConfig = {
-  address: deploymentData.contracts.golNFT.address,
-  abi: GOLNFTABI,
-};
 
 export default function NFTView() {
   const [viewOrder, setViewOrder] = useState(ViewOrder.FIRST);

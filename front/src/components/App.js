@@ -10,7 +10,7 @@ export default function App() {
     <WagmiConfig client={client}>
       <Navbar/>
       <GridDisplay/>
-      <NFTView/>
+      {/*<NFTView/>*/}
     </WagmiConfig>
   );
 }
