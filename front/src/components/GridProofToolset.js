@@ -25,7 +25,7 @@ export default function GridProofToolset({
     args: proofCalldata,
   });
   
-  const { data, isLoading, isSuccess, write: mint } = useContractWrite(config);
+  const { write: mint } = useContractWrite(config);
 
   return (
     <>
@@ -65,11 +65,17 @@ const generateProofCalldata = async ({address, grid, prizenum}) => {
     `${CIRCUIT_PATH}.zkey`,
   );
   
+  /**
+   * For some reason the encoding of a, b, and c in proof is really messed up
+   * so you need to convert it to solidity calldata format and then extract a, b, and c
+   */
   const resultGridNum = publicSignals[2];
-  const abc = [
-    proof.pi_a.slice(0, -1),
-    proof.pi_b.slice(0, -1),
-    proof.pi_c.slice(0, -1),
+  const solidityCalldata = JSON.parse(`[${await snarkjs.groth16.exportSolidityCallData(proof, publicSignals)}]`);
+  const solidityCalldataArgs = [
+    publicSignals[0],  
+    publicSignals[1], 
+    ...solidityCalldata.slice(0,3),
   ]
-  return prizenum.eq(resultGridNum) ? [ publicSignals[0], publicSignals[1], ...abc] : null; 
+
+  return prizenum.eq(resultGridNum) ? solidityCalldataArgs : null; 
 } 
