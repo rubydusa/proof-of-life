@@ -6,11 +6,11 @@ import { useState } from 'react';
 import { gridToNum } from '../game';
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
-import { CIRCUIT_PATH } from '../data/global';
 
 const snarkjs = window.snarkjs;
 
 export default function GridProofToolset({
+  global,
   grid, 
   prizenum, 
   proofErrorMessage,
@@ -37,6 +37,7 @@ export default function GridProofToolset({
               address,
               grid,
               prizenum,
+              circutPath: global.CIRCUIT_PATH,
             });
             
             setProofErrorMessage(
@@ -55,14 +56,14 @@ export default function GridProofToolset({
   )
 }
 
-const generateProofCalldata = async ({address, grid, prizenum}) => {
+const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     {
       address,
       data: [gridToNum(grid).toString()],
     },
-    `${CIRCUIT_PATH}.wasm`,
-    `${CIRCUIT_PATH}.zkey`,
+    `${circutPath}.wasm`,
+    `${circutPath}.zkey`,
   );
   
   /**

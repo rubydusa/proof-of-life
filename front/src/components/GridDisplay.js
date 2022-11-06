@@ -10,17 +10,16 @@ import GridProofToolset from './GridProofToolset';
 import { emptyGrid, flipCell, gridToNum, numToGrid } from '../game';
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
-import { ROW_COUNT, COL_COUNT, GRID_SETTINGS } from '../data/global';
 
 import '../styles/GridDisplay.css';
 
-export default function GridDisplay() {
+export default function GridDisplay({global}) {
   const { data: prizenum, error, isError, isLoading } = useContractRead({
     ...GOLNFTContractConfig,
     functionName: 'prizenum',
   });
 
-  const [grid, setGrid] = useState(() => emptyGrid(GRID_SETTINGS));
+  const [grid, setGrid] = useState(() => emptyGrid(global.GRID_SETTINGS));
   const [gridInput, setGridInput] = useState('0');
   const [proofErrorMessage, setProofErrorMessage] = useState('');
   
@@ -39,8 +38,8 @@ export default function GridDisplay() {
       <div className='user-grid'>
         <Grid 
           grid={grid} 
-          rowCount={ROW_COUNT} 
-          colCount={COL_COUNT}
+          rowCount={global.ROW_COUNT} 
+          colCount={global.COL_COUNT}
           onClickHandler={({x, y}) => {
             setGrid(() => flipCell(grid, x, y))
           }}/>
@@ -50,9 +49,9 @@ export default function GridDisplay() {
       </div>
       <div className='prizenum-grid'>
         <Grid
-          grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : BigNumber.from("0")}
-          rowCount={ROW_COUNT}
-          colCount={COL_COUNT}
+          grid={prizenum ? numToGrid(prizenum, global.GRID_SETTINGS) : BigNumber.from("0")}
+          rowCount={global.ROW_COUNT}
+          colCount={global.COL_COUNT}
           onClickHandler={() => {}}/>
       </div>
       {
