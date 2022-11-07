@@ -26,11 +26,13 @@ export default function GridDisplay({global}) {
   return (
     <div className='grid-display'>
       <GridInputToolset 
+        global={global}
         grid={grid}
         gridInput={gridInput}
         setGrid={(v) => setGrid(v)}
         setGridInput={(v) => setGridInput(v)}/>
       <GridProofToolset
+        global={global}
         grid={grid}
         prizenum={prizenum}
         proofErrorMessage={proofErrorMessage}

@@ -1,7 +1,7 @@
 import { useAccount, usePrepareContractWrite, useContractWrite } from 'wagmi';
 
-import React from 'react'
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDebounce } from 'usehooks-ts';
 
 import { gridToNum } from '../game';
 
@@ -16,38 +16,46 @@ export default function GridProofToolset({
   proofErrorMessage,
   setProofErrorMessage,
 }) {
-  const [proofCalldata, setProofCalldata] = useState(() => [0, 0, [0, 0], [[0, 0], [0, 0]], [0, 0]]);
-
   const { address, isConnected } = useAccount();
+  const [proofCalldata, setProofCalldata] = useState(null);
+
   const { config } = usePrepareContractWrite({
     ...GOLNFTContractConfig,
     functionName: 'mint',
     args: proofCalldata,
+    enabled: proofCalldata !== null,
   });
   
   const { write: mint } = useContractWrite(config);
+  
+  /**
+   * Compute calldata with a debounce of a second. 
+   * Doesn't change state if invalid proof (aside from error message)
+   * 
+   * It's possible the useEffect has been called twice and two generateProofCalldata are running at the same time 
+   */
+  const debouncedGrid = useDebounce(grid, 1000);
+  useEffect(() => {
+    (async () => {
+      const calldata = await generateProofCalldata({
+        address,
+        grid: debouncedGrid,
+        prizenum,
+        circutPath: global.CIRCUIT_PATH
+      });
+     
+      calldata && setProofCalldata(calldata);
+      setProofErrorMessage(calldata ? '' : 'Invalid proof');
+    })();
+  }, [address, debouncedGrid, prizenum, global.CIRCUIT_PATH, setProofErrorMessage]);
 
   return (
     <>
       {isConnected && 
       <div>
-        <button onClick={
-          async () => {
-            const calldata = await generateProofCalldata({
-              address,
-              grid,
-              prizenum,
-              circutPath: global.CIRCUIT_PATH,
-            });
-            
-            setProofErrorMessage(
-              calldata === null ? 'Invalid proof' : ''
-            );
-
-            calldata && setProofCalldata(calldata);
-            mint();
-          }
-        }>
+        <button 
+          disabled={proofCalldata === null}
+          onClick={mint}>
           Generate QuickProof
         </button> 
         <div>{proofErrorMessage}</div>
