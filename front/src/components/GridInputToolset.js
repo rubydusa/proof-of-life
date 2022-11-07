@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { runSimulationStep, numToGrid, gridToNum } from '../game'
 
-export default function GridInputToolset({global, grid, gridInput, setGrid, setGridInput}) {
+import GlobalContext from '../data/global'
+
+export default function GridInputToolset({grid, gridInput, setGrid, setGridInput}) {
+  const { GRID_SETTINGS } = useContext(GlobalContext);
+
   return (
     <div>
       <button
         onClick={() => setGrid(() => runSimulationStep(grid))}>
         NextState
       </button>
-      <button onClick={() => setGrid(numToGrid(gridInput, global.GRID_SETTINGS))}>
+      <button onClick={() => setGrid(numToGrid(gridInput, GRID_SETTINGS))}>
         Load
       </button>
       <button onClick={() => setGridInput(gridToNum(grid))}>

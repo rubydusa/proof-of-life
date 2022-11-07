@@ -1,21 +1,20 @@
 import { useAccount, usePrepareContractWrite, useContractWrite } from 'wagmi';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useDebounce } from 'usehooks-ts';
 
 import { gridToNum } from '../game';
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
+import GlobalContext from '../data/global';
 
 const snarkjs = window.snarkjs;
 
 export default function GridProofToolset({
-  global,
   grid, 
   prizenum, 
-  proofErrorMessage,
-  setProofErrorMessage,
 }) {
+  const { CIRCUIT_PATH } = useContext(GlobalContext);
   const { address, isConnected } = useAccount();
   const [proofCalldata, setProofCalldata] = useState(null);
 
@@ -41,13 +40,12 @@ export default function GridProofToolset({
         address,
         grid: debouncedGrid,
         prizenum,
-        circutPath: global.CIRCUIT_PATH
+        circutPath: CIRCUIT_PATH
       });
      
       calldata && setProofCalldata(calldata);
-      setProofErrorMessage(calldata ? '' : 'Invalid proof');
     })();
-  }, [address, debouncedGrid, prizenum, global.CIRCUIT_PATH, setProofErrorMessage]);
+  }, [address, debouncedGrid, prizenum, CIRCUIT_PATH]);
 
   return (
     <>
@@ -58,7 +56,6 @@ export default function GridProofToolset({
           onClick={mint}>
           Generate QuickProof
         </button> 
-        <div>{proofErrorMessage}</div>
       </div>}
     </>
   )

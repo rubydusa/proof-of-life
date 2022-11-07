@@ -4,13 +4,12 @@ import NFTView from './NFTView';
 
 import { WagmiConfig } from 'wagmi';
 import { client } from '../wagmiClient';
-import global from '../data/global';
 
 export default function App() {
   return (
     <WagmiConfig client={client}>
       <Navbar/>
-      <GridDisplay global={global}/>
+      <GridDisplay/>
       {/*<NFTView/>*/}
     </WagmiConfig>
   );
