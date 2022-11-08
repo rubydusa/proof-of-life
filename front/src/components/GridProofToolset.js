@@ -1,7 +1,7 @@
 import { useAccount, usePrepareContractWrite, useContractWrite } from 'wagmi';
 
-import React, { useState, useEffect, useContext } from 'react';
-import { useDebounce } from 'usehooks-ts';
+import React, { useState, useEffect, useContext, forwardRef, useImperativeHandle } from 'react';
+import { useDebounce } from '../hooks';
 
 import { gridToNum } from '../game';
 
@@ -10,10 +10,10 @@ import GlobalContext from '../data/global';
 
 const snarkjs = window.snarkjs;
 
-export default function GridProofToolset({
+export default forwardRef(function GridProofToolset({
   grid, 
   prizenum, 
-}) {
+}, ref) {
   const { CIRCUIT_PATH } = useContext(GlobalContext);
   const { address, isConnected } = useAccount();
   const [proofCalldata, setProofCalldata] = useState(null);
@@ -33,7 +33,7 @@ export default function GridProofToolset({
    * 
    * It's possible the useEffect has been called twice and two generateProofCalldata are running at the same time 
    */
-  const debouncedGrid = useDebounce(grid, 1000);
+  const [debouncedGrid, flush] = useDebounce(grid, 1000);
   useEffect(() => {
     (async () => {
       const calldata = await generateProofCalldata({
@@ -46,6 +46,13 @@ export default function GridProofToolset({
       calldata && setProofCalldata(calldata);
     })();
   }, [address, debouncedGrid, prizenum, CIRCUIT_PATH]);
+  
+  /**
+   * Enable parents to call flush
+   */
+  useImperativeHandle(ref, () => ({
+    flush
+  }));
 
   return (
     <>
@@ -59,9 +66,13 @@ export default function GridProofToolset({
       </div>}
     </>
   )
-}
+})
 
 const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
+  if (!address) {
+    return null;
+  }
+
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     {
       address,

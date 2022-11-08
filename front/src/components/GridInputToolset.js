@@ -4,16 +4,16 @@ import { runSimulationStep, numToGrid, gridToNum } from '../game'
 
 import GlobalContext from '../data/global'
 
-export default function GridInputToolset({grid, gridInput, setGrid, setGridInput}) {
+export default function GridInputToolset({grid, gridInput, setGrid, setGridInput, flush}) {
   const { GRID_SETTINGS } = useContext(GlobalContext);
 
   return (
     <div>
       <button
-        onClick={() => setGrid(() => runSimulationStep(grid))}>
+        onClick={() => flush(runSimulationStep(grid))}>
         NextState
       </button>
-      <button onClick={() => setGrid(numToGrid(gridInput, GRID_SETTINGS))}>
+      <button onClick={() => flush(numToGrid(gridInput, GRID_SETTINGS))}>
         Load
       </button>
       <button onClick={() => setGridInput(gridToNum(grid))}>

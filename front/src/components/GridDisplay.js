@@ -1,6 +1,6 @@
 import { useContractRead } from 'wagmi';
 
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useRef } from 'react'
 import { BigNumber } from 'ethers';
 import Grid from './Grid';
 import GridInputToolset from './GridInputToolset';
@@ -22,6 +22,12 @@ export default function GridDisplay() {
 
   const [grid, setGrid] = useState(() => emptyGrid(GRID_SETTINGS));
   const [gridInput, setGridInput] = useState('0');
+  const proofToolsetRef = useRef();
+  
+  const flush = (value) => {
+    proofToolsetRef.current.flush(value);
+    setGrid(value);
+  }
   
   return (
     <div className='grid-display'>
@@ -29,10 +35,12 @@ export default function GridDisplay() {
         grid={grid}
         gridInput={gridInput}
         setGrid={(v) => setGrid(v)}
-        setGridInput={(v) => setGridInput(v)}/>
+        setGridInput={(v) => setGridInput(v)}
+        flush={flush}/>
       <GridProofToolset
         grid={grid}
-        prizenum={prizenum}/>
+        prizenum={prizenum}
+        ref={proofToolsetRef}/>
       <div className='user-grid'>
         <Grid 
           grid={grid} 
