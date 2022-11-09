@@ -1,7 +1,6 @@
 import { useContractRead } from 'wagmi';
 
 import React, { useState, useContext, useRef } from 'react'
-import { BigNumber } from 'ethers';
 import Grid from './Grid';
 import GridInputToolset from './GridInputToolset';
 import GridProofToolset from './GridProofToolset';
@@ -55,7 +54,7 @@ export default function GridDisplay() {
       </div>
       <div className='prizenum-grid'>
         <Grid
-          grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : BigNumber.from("0")}
+          grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
           rowCount={ROW_COUNT}
           colCount={COL_COUNT}
           onClickHandler={() => {}}/>
