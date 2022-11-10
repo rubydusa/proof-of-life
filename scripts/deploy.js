@@ -26,11 +26,11 @@ async function main() {
     const preBalance = await deployerAccount.getBalance();
 
     const golRandom = await GOLRandom.deploy(W, H, P, BITS_OUT_OF);
-    await sleep(2000);
+    await sleep(5000);
     const golSVG = await GOLSVG.deploy();
-    await sleep(2000);
+    await sleep(5000);
     const golVerifier = await GOLVerifier.deploy();
-    await sleep(2000);
+    await sleep(5000);
     const golNFT = await GOLNFT.deploy(golVerifier.address, golRandom.address, golSVG.address, W, H, EXPIRY); 
     
     const postBalance = await deployerAccount.getBalance();
