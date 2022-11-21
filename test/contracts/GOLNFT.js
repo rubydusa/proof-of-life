@@ -1,5 +1,8 @@
 const hre = require("hardhat");
 const chai = require("chai");
+const isSvg = require("is-svg");
+chai.use(require('chai-string'));
+
 const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 const { ethers } = hre;
@@ -172,7 +175,10 @@ describe("GOLNFT", () => {
 
 			await mint(input);
 
-			chai.expect(await golNFT.tokenURI("0")).to.not.be.empty;
+			const resultString = await golNFT.tokenURI("0");
+			chai.expect(resultString).to.startWith("data:image/svg+xml;base64,");
+			const svgString = Buffer.from(resultString.replace("data:image/svg+xml;base64,", ""), "base64").toString();
+			chai.expect(isSvg(svgString)).to.be.true;
 		});
 
 		it("Doesn't work for a non valid tokenId", async () => {
