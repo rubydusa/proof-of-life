@@ -14,15 +14,25 @@ export default forwardRef(function GridProofToolset({
   grid, 
   prizenum, 
 }, ref) {
-  const { CIRCUIT_PATH } = useContext(GlobalContext);
+  const { CIRCUIT_PATH, EXCEPTIONS } = useContext(GlobalContext);
   const { address, isConnected } = useAccount();
   const [proofCalldata, setProofCalldata] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { config } = usePrepareContractWrite({
     ...GOLNFTContractConfig,
     functionName: 'mint',
     args: proofCalldata,
     enabled: proofCalldata !== null,
+    onError(error) {
+      if (error.reason === EXCEPTIONS.SOLUTION_ALREADY_EXISTS) {
+        setErrorMessage("Solution already exists");
+      }
+      else {
+        setErrorMessage("Something went terribly wrong...");
+      }
+    }
   });
   
   const { write: mint } = useContractWrite(config);
@@ -33,19 +43,29 @@ export default forwardRef(function GridProofToolset({
    * 
    * It's possible the useEffect has been called twice and two generateProofCalldata are running at the same time 
    */
-  const [debouncedGrid, flush] = useDebounce(grid, 1000);
+  const [debouncedGrid, flush] = useDebounce(grid, 500);
   useEffect(() => {
     (async () => {
+      setIsGenerating(true);
       const calldata = await generateProofCalldata({
         address,
         grid: debouncedGrid,
         prizenum,
         circutPath: CIRCUIT_PATH
       });
+      setIsGenerating(false);
      
       calldata && setProofCalldata(calldata);
     })();
   }, [address, debouncedGrid, prizenum, CIRCUIT_PATH]);
+  
+  /**
+   * Disable clicking on submit proof button during debounce period
+   */
+  useEffect(() => {
+    setProofCalldata(null);
+    setErrorMessage("");
+  }, [grid])
   
   /**
    * Enable parents to call flush
@@ -59,10 +79,14 @@ export default forwardRef(function GridProofToolset({
       {isConnected && 
       <div>
         <button 
-          disabled={proofCalldata === null}
+          disabled={!mint}
           onClick={mint}>
           Generate QuickProof
         </button> 
+        <p style={{height: "48px"}}>
+          {isGenerating && "Generating proof..."}
+          {errorMessage}
+        </p>
       </div>}
     </>
   )
