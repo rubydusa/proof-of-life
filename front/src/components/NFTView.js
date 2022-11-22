@@ -1,6 +1,7 @@
 import { useContractRead, useContractInfiniteReads, paginatedIndexesConfig } from 'wagmi';
 
 import React from 'react'
+import SVG from 'react-inlinesvg';
 import { useState } from 'react';
 import { BigNumber } from 'ethers';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
@@ -22,13 +23,14 @@ const PAGESIZE = 2;
 export default function NFTView() {
   const [viewOrder, setViewOrder] = useState(ViewOrder.FIRST);
   const [viewOwner, setViewOwner] = useState(ViewOwner.ALL);
+  const [pageIndex, setPageIndex] = useState(0);
   
   const { data: totalSupply } = useContractRead({
     ...GOLNFTContractConfig,
     functionName: 'totalSupply',
   })
   
-  const nftViews = useContractInfiniteReads({
+  const { data: pagesData } = useContractInfiniteReads({
     cacheKey: 'nftViews',
     ...paginatedIndexesConfig(
       (index) => {
@@ -41,15 +43,20 @@ export default function NFTView() {
         ]
       },
       { 
-        start: viewOrder === ViewOrder.FIRST ? 0 : totalSupply.sub(1).toNumber(), 
+        start: 0,
         perPage: PAGESIZE,
-        direction: viewOrder === ViewOrder.FIRST ? 'increment' : 'decrement',
+        direction: 'increment',
       }
     )
   });
 
   return (
     <div className="nft-view">
+      {
+        pagesData.pages[pageIndex].map(
+          (data, i) => <SVG key={i} src={data} width={128} height="auto" />
+        )
+      }
     </div>
   )
 }

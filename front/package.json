@@ -10,6 +10,7 @@
     "immer": "^9.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-inlinesvg": "^3.0.1",
     "react-scripts": "5.0.1",
     "snarkjs": "^0.5.0",
     "usehooks-ts": "^2.9.1",

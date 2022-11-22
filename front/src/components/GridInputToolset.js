@@ -27,7 +27,7 @@ export default function GridInputToolset({grid, gridInput, setGrid, setGridInput
             const curr = history.current.pop();
             const prev = history.current.pop();
             forwardHistory.current.push(curr);
-            flush(prev);
+            setGrid(prev);
           } 
         }}>
         Back
@@ -35,7 +35,7 @@ export default function GridInputToolset({grid, gridInput, setGrid, setGridInput
       <button
         onClick={() => {
           if (forwardHistory.current.length >= 1) {
-            flush(forwardHistory.current.pop());
+            setGrid(forwardHistory.current.pop());
           }
         }}>
         Forward
