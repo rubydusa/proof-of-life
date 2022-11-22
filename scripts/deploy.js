@@ -25,6 +25,7 @@ async function main() {
     
     const preBalance = await deployerAccount.getBalance();
 
+    await sleep(5000);
     const golRandom = await GOLRandom.deploy(W, H, P, BITS_OUT_OF);
     await sleep(5000);
     const golSVG = await GOLSVG.deploy();
