@@ -22,7 +22,7 @@ const ViewOwner = {
 
 export default function NFTView() {
   const { PAGESIZE } = useContext(GlobalContext);
-  const [viewOrder, setViewOrder] = useState(ViewOrder.FIRST);
+  const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
   const [viewOwner, setViewOwner] = useState(ViewOwner.ALL);
   const [pageIndex, setPageIndex] = useState(0);
   
@@ -31,8 +31,8 @@ export default function NFTView() {
     functionName: 'totalSupply',
   });
   
-  const /* { data: pagesData, fetchNextPage } */ allData = useContractInfiniteReads({
-    cacheKey: 'nftViews',
+  const pagesDataIncrement = useContractInfiniteReads({
+    cacheKey: 'nftViewsIncrement',
     ...paginatedIndexesConfig(
       (index) => {
         return [
@@ -44,23 +44,52 @@ export default function NFTView() {
         ]
       },
       { 
-        start: viewOrder === ViewOrder.FIRST ? 0 : totalSupply.sub(1),
+        start: 0,
         perPage: PAGESIZE,
-        direction: viewOrder === ViewOrder.FIRST ? 'increment' : 'decremenet',
+        direction: 'increment',
       }
     )
   });
-  const { data: pagesData, fetchNextPage, isFetching } = allData;
-  
-  const { pages } = pagesData;
-  console.log(pages[pageIndex]);
-  console.log(pages);
-  if (pageIndex === pages.length - 1 && !isFetching) {
+
+  const pagesDataDecrement = useContractInfiniteReads({
+    cacheKey: 'nftViewsDecrement',
+    ...paginatedIndexesConfig(
+      (index) => {
+        return [
+          {
+            ...GOLNFTContractConfig,
+            functionName: 'tokenURI',
+            args: [BigNumber.from(index)], 
+          }
+        ]
+      },
+      { 
+        start: totalSupply.sub(1),
+        perPage: PAGESIZE,
+        direction: 'decrement',
+      }
+    )
+  });
+
+  const { pages, fetchNextPage, isFetching, hasNextPage } = getPages({
+    pagesDataIncrement,
+    pagesDataDecrement,
+    viewOrder
+  });
+
+  /**
+   * hasNextPage only works on decremenet variant
+   * TODO: try to override getNextPageParam of increment variant so it stops at totalSupply
+   */
+  if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
   }
-
+  else if (isFetching) {
+    return <div className='nft-view'>Pages unavailable right now</div>
+  }
+  
   return (
-    <div className="nft-view">
+    <div className='nft-view'>
       <button 
         disabled={pages[pageIndex + 1] ? !validPage(pages[pageIndex + 1]) : true}
         onClick={() => {
@@ -75,6 +104,15 @@ export default function NFTView() {
         }}>
         Previous Page
       </button>
+      <select 
+        value={viewOrder} 
+        onChange={(e) => {
+          setViewOrder(parseInt(e.target.value));
+          setPageIndex(0);
+        }}>
+        <option value={ViewOrder.FIRST}>First</option>
+        <option value={ViewOrder.LAST}>Last</option>
+      </select>
       <div className="display-area">
         {
           pages[pageIndex] && pages[pageIndex].map(
@@ -88,4 +126,15 @@ export default function NFTView() {
 
 const validPage = (page) => {
   return page.some(el => el !== null);
+}
+
+const getPages = ({ pagesDataIncrement, pagesDataDecrement, viewOrder }) => {
+  const { data, fetchNextPage, isFetching, hasNextPage } = 
+    viewOrder === ViewOrder.FIRST
+      ? pagesDataIncrement 
+      : pagesDataDecrement; 
+  
+  const pages = data !== undefined ? data.pages : undefined;
+  
+  return { pages, fetchNextPage, isFetching, hasNextPage };
 }
