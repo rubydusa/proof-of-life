@@ -48,7 +48,8 @@ export default function NFTView() {
         perPage: PAGESIZE,
         direction: 'increment',
       }
-    )
+    ),
+    getNextPageParam: nftViewGetNextPageParam
   });
 
   const pagesDataDecrement = useContractInfiniteReads({
@@ -68,7 +69,8 @@ export default function NFTView() {
         perPage: PAGESIZE,
         direction: 'decrement',
       }
-    )
+    ),
+    getNextPageParam: nftViewGetNextPageParam
   });
 
   const { pages, fetchNextPage, isFetching, hasNextPage } = getPages({
@@ -77,10 +79,6 @@ export default function NFTView() {
     viewOrder
   });
 
-  /**
-   * hasNextPage only works on decremenet variant
-   * TODO: try to override getNextPageParam of increment variant so it stops at totalSupply
-   */
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
   }
@@ -91,7 +89,7 @@ export default function NFTView() {
   return (
     <div className='nft-view'>
       <button 
-        disabled={pages[pageIndex + 1] ? !validPage(pages[pageIndex + 1]) : true}
+        disabled={pageIndex === pages.length - 1}
         onClick={() => {
           setPageIndex(currentIndex => currentIndex + 1);
         }}>
@@ -124,10 +122,6 @@ export default function NFTView() {
   )
 }
 
-const validPage = (page) => {
-  return page.some(el => el !== null);
-}
-
 const getPages = ({ pagesDataIncrement, pagesDataDecrement, viewOrder }) => {
   const { data, fetchNextPage, isFetching, hasNextPage } = 
     viewOrder === ViewOrder.FIRST
@@ -137,4 +131,8 @@ const getPages = ({ pagesDataIncrement, pagesDataDecrement, viewOrder }) => {
   const pages = data !== undefined ? data.pages : undefined;
   
   return { pages, fetchNextPage, isFetching, hasNextPage };
+}
+
+const nftViewGetNextPageParam = (lastPage, allPages) => {
+  return lastPage.every(el => el !== null) ? allPages.length : undefined;
 }
