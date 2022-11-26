@@ -1,3 +1,5 @@
+import { useAccount } from 'wagmi';
+
 import React, { useState, useContext } from 'react'
 import useNFTView from '../hooks/useNFTView';
 import NFTViewElement from './NFTViewElement';
@@ -9,18 +11,18 @@ import '../styles/NFTView.css';
 
 export default function NFTView() {
   const { PAGESIZE } = useContext(GlobalContext);
+  const { address } = useAccount();
   const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
-  const [viewOwner, setViewOwner] = useState(ViewOwner.ALL);
+  const [viewOwner, setViewOwner] = useState(ViewOwner.USER);
   const [pageIndex, setPageIndex] = useState(0);
   
   const { pages, fetchNextPage, isFetching, hasNextPage } = useNFTView({ 
     viewOrder, 
-    ViewOwner, 
+    viewOwner, 
+    viewOwnerAddress: address,
     pageSize: PAGESIZE 
   });
   
-  console.log(pages);
-
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
   }
@@ -52,6 +54,15 @@ export default function NFTView() {
         }}>
         <option value={ViewOrder.FIRST}>First</option>
         <option value={ViewOrder.LAST}>Last</option>
+      </select>
+      <select 
+        value={viewOwner} 
+        onChange={(e) => {
+          setViewOwner(parseInt(e.target.value));
+          setPageIndex(0);
+        }}>
+        <option value={ViewOwner.ALL}>All</option>
+        <option value={ViewOwner.USER}>Mine</option>
       </select>
       <div className="display-area">
         {
