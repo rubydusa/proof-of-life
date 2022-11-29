@@ -1,6 +1,6 @@
 import Navbar from './Navbar';
 import GridDisplay from './GridDisplay';
-import NFTView from './NFTView';
+import NFTViewWrapper from './NFTViewWrapper';
 
 import { WagmiConfig } from 'wagmi';
 import { client } from '../wagmiClient';
@@ -10,7 +10,7 @@ export default function App() {
     <WagmiConfig client={client}>
       <Navbar/>
       <GridDisplay/>
-      <NFTView />
+      <NFTViewWrapper />
     </WagmiConfig>
   );
 }

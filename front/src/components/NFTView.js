@@ -9,9 +9,8 @@ import GlobalContext from '../data/global';
 
 import '../styles/NFTView.css';
 
-export default function NFTView() {
+export default function NFTView({ address, totalSupply, addressBalance }) {
   const { PAGESIZE } = useContext(GlobalContext);
-  const { address } = useAccount();
   const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
   const [viewOwner, setViewOwner] = useState(ViewOwner.USER);
   const [pageIndex, setPageIndex] = useState(0);
@@ -19,8 +18,10 @@ export default function NFTView() {
   const { pages, fetchNextPage, isFetching, hasNextPage } = useNFTView({ 
     viewOrder, 
     viewOwner, 
+    pageSize: PAGESIZE,
     viewOwnerAddress: address,
-    pageSize: PAGESIZE 
+    totalSupply,
+    addressBalance,
   });
   
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {

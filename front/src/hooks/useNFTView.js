@@ -6,12 +6,7 @@ import { ViewOrder, ViewOwner } from "../enums";
 
 import { GOLNFTContractConfig } from "../data/contractConfigs";
 
-export default function useNFTView({viewOrder, viewOwner, pageSize, viewOwnerAddress}) {
-  const { data: totalSupply } = useContractRead({
-    ...GOLNFTContractConfig,
-    functionName: 'totalSupply',
-  });
-  
+export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply, addressBalance, viewOwnerAddress}) {
   const pagesDataIncrement = useContractInfiniteReads({
     cacheKey: 'nftViewsIncrement',
     ...paginatedIndexesConfig(
@@ -52,13 +47,6 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, viewOwnerAdd
       }
     ),
     getNextPageParam: nftViewGetNextPageParam(pageSize)
-  });
-  
-  const { data: addressBalance } = useContractRead({
-    ...GOLNFTContractConfig,
-    functionName: 'balanceOf',
-    args: [viewOwnerAddress],
-    enabled: viewOwner === ViewOwner.USER
   });
   
   const addressTokenIDsIncrement = useContractInfiniteReads({
