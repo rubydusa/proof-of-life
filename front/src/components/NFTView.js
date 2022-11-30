@@ -1,5 +1,3 @@
-import { useAccount } from 'wagmi';
-
 import React, { useState, useContext } from 'react'
 import useNFTView from '../hooks/useNFTView';
 import NFTViewElement from './NFTViewElement';
@@ -15,7 +13,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   const [viewOwner, setViewOwner] = useState(ViewOwner.USER);
   const [pageIndex, setPageIndex] = useState(0);
   
-  const { pages, fetchNextPage, isFetching, hasNextPage } = useNFTView({ 
+  const { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = useNFTView({ 
     viewOrder, 
     viewOwner, 
     pageSize: PAGESIZE,
@@ -24,11 +22,23 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
     addressBalance,
   });
   
+  if (isError) {
+    return (
+      <div>
+        An Error occured: {error}
+      </div>
+    )
+  }
+  else if (isLoading) {
+    return (
+      <div>
+        Loading
+      </div>
+    )
+  }
+  
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
-  }
-  else if (isFetching) {
-    return <div className='nft-view'>Pages unavailable right now</div>
   }
   
   return (

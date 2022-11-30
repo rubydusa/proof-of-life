@@ -1,5 +1,5 @@
 
-import { useContractRead, useContractInfiniteReads, paginatedIndexesConfig, useContractReads } from "wagmi";
+import { useContractInfiniteReads, paginatedIndexesConfig, useContractReads } from "wagmi";
 
 import { BigNumber } from 'ethers';
 import { ViewOrder, ViewOwner } from "../enums";
@@ -128,17 +128,17 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
   });
 
   if (viewOwner === ViewOwner.ALL) {
-    const { data, fetchNextPage, isFetching, hasNextPage } = 
+    const { data, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = 
       viewOrder === ViewOrder.FIRST
         ? pagesDataIncrement 
         : pagesDataDecrement; 
     
     const pages = data !== undefined ? data.pages : undefined;
     
-    return { pages, fetchNextPage, isFetching, hasNextPage };
+    return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   } 
   else {
-    const { fetchNextPage, isFetching, hasNextPage} =
+    const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} =
       viewOrder === ViewOrder.FIRST
         ? addressTokenIDsIncrement
         : addressTokenIDsDecrement
@@ -162,7 +162,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
       }, []) 
       : undefined;
     
-    return { pages, fetchNextPage, isFetching, hasNextPage };
+    return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   }
 }
 

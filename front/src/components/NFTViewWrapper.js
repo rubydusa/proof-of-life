@@ -3,17 +3,18 @@ import React from 'react'
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 import NFTView from './NFTView';
+import { Status } from '../enums';
 
 // this is a hacky way to make sure the pagination starts with a valid address and totalSupply
 // I should have used services instead of this shitty react library... :(
 export default function NFTViewWrapper() {
   const { address, isConnected } = useAccount();
-  const { data: totalSupply, isSuccess: isTotalSupplySuccess } = useContractRead({
+  const { data: totalSupply, status: totalSupplyStatus } = useContractRead({
     ...GOLNFTContractConfig,
     functionName: 'totalSupply',
   });
 
-  const { data: addressBalance, isSuccess: isAddressBalanceSucess } = useContractRead({
+  const { data: addressBalance, status: addressBalanceStatus } = useContractRead({
     ...GOLNFTContractConfig,
     functionName: 'balanceOf',
     args: [address],
@@ -29,7 +30,14 @@ export default function NFTViewWrapper() {
       </div>
     )
   }
-  else if (!isTotalSupplySuccess || !isAddressBalanceSucess) {
+  else if (totalSupplyStatus === Status.ERROR || addressBalanceStatus === Status.ERROR) {
+    return (
+      <div>
+        An error occured
+      </div>
+    )
+  }
+  else if (totalSupplyStatus === Status.LOADING || addressBalanceStatus === Status.LOADING) {
     return (
       <div>
         <p>
