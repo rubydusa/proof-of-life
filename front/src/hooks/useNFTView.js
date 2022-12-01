@@ -67,7 +67,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
         direction: 'increment',
       }
     ),
-    getNextPageParam: nftViewGetNextPageParam(pageSize),
+    getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize),
     enabled: viewOwner === ViewOwner.USER
   });
 
@@ -89,7 +89,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
         direction: 'decrement',
       }
     ),
-    getNextPageParam: nftViewGetNextPageParam(pageSize),
+    getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize),
     enabled: viewOwner === ViewOwner.USER
   });
 
@@ -138,6 +138,8 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   } 
   else {
+    // unfortunately tokenOfOwnerByIndex does not return tokenIds of owner by order,
+    // so ordering by order has no meaning
     const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} =
       viewOrder === ViewOrder.FIRST
         ? addressTokenIDsIncrement
@@ -168,4 +170,16 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
 
 const nftViewGetNextPageParam = (pageSize) => (lastPage, allPages) => {
   return lastPage.every(el => el !== null) && lastPage.length === pageSize ? allPages.length : undefined;
+}
+
+const nftViewAddressTokenIdsGetNextPageParam = (pageSize, addressBalance) => (lastPage, allPages) => {
+  const expectedNextPageParam = nftViewGetNextPageParam(pageSize)(lastPage, allPages);
+
+  if (expectedNextPageParam !== undefined) {
+    return allPages.length * pageSize < addressBalance 
+      ? expectedNextPageParam
+      : undefined;
+  }
+  
+  return undefined;
 }

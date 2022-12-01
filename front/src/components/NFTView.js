@@ -37,6 +37,16 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
     )
   }
   
+  // for some reason sometimes isFetching is true and isLoading and isError are false
+  // but pages are still undefined, huh?
+  if (!pages) {
+    return (
+      <div>
+        Pages unavailable
+      </div>
+    )
+  }
+  
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
   }
