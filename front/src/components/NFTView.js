@@ -72,7 +72,8 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
         onChange={(e) => {
           setViewOrder(parseInt(e.target.value));
           setPageIndex(0);
-        }}>
+        }}
+        disabled={viewOwner === ViewOwner.USER}>
         <option value={ViewOrder.FIRST}>First</option>
         <option value={ViewOrder.LAST}>Last</option>
       </select>

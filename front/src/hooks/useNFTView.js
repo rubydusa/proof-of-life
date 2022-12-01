@@ -48,30 +48,8 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     ),
     getNextPageParam: nftViewGetNextPageParam(pageSize)
   });
-  
-  const addressTokenIDsIncrement = useContractInfiniteReads({
-    cacheKey: 'nftViewsTokenIDsIncrement',
-    ...paginatedIndexesConfig(
-      (index) => {
-        return [
-          {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenOfOwnerByIndex',
-            args: [viewOwnerAddress, BigNumber.from(index)], 
-          }
-        ]
-      },
-      { 
-        start: 0,
-        perPage: pageSize,
-        direction: 'increment',
-      }
-    ),
-    getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize),
-    enabled: viewOwner === ViewOwner.USER
-  });
 
-  const addressTokenIDsDecrement = useContractInfiniteReads({
+  const addressTokenIDs = useContractInfiniteReads({
     cacheKey: 'nftViewsTokenIDsDecrement',
     ...paginatedIndexesConfig(
       (index) => {
@@ -94,26 +72,9 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
   });
 
   // pages are flattened 
-  const userPagesDataIncrement = useContractReads({
-    contracts: addressTokenIDsIncrement
-    ? addressTokenIDsIncrement.data.pages
-      .map(page => {
-        return page.map(tokenId => {
-          return {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenURI',
-            args: [tokenId]
-          }
-        })
-      })
-      .flat()
-    : []
-  });
-
-  // pages are flattened 
-  const userPagesDataDecrement = useContractReads({
-    contracts: addressTokenIDsDecrement
-    ? addressTokenIDsDecrement.data.pages
+  const userPagesData = useContractReads({
+    contracts: addressTokenIDs
+    ? addressTokenIDs.data.pages
       .map(page => {
         return page.map(tokenId => {
           return {
@@ -138,16 +99,11 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   } 
   else {
-    // unfortunately tokenOfOwnerByIndex does not return tokenIds of owner by order,
-    // so ordering by order has no meaning
-    const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} =
-      viewOrder === ViewOrder.FIRST
-        ? addressTokenIDsIncrement
-        : addressTokenIDsDecrement
-    const { data } = 
-      viewOrder === ViewOrder.FIRST
-        ? userPagesDataIncrement 
-        : userPagesDataDecrement; 
+    // view order doesn't matter when ViewOwner === USER
+    // ERC721Enumerable doesn't perserve order
+    // I choose decrement enumeration because more likely to show recent relavent mints
+    const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} = addressTokenIDs;
+    const { data } = userPagesData;
     
     // chunkify 
     const pages = data !== undefined 
