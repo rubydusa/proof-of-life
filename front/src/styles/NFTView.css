@@ -2,3 +2,34 @@
     display: flex;
     height: 20vh;
 }
+
+.regular-element-container {
+    display: flex;
+}
+
+.portal-element-container {
+    display: flex;
+    padding: 100px;
+}
+
+/* Doesn't include background */
+.portal-root {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.portal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0, 0, .7);
+}

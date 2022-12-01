@@ -11,9 +11,7 @@ export default function NFTViewElement({src}) {
       { 
       src !== null 
         ? <div
-            style={{
-              display: 'flex',
-            }}
+            className='regular-element-container'
             onClick={() => setClicked(true)}>
             <SVG src={src} />
           </div>
@@ -28,34 +26,12 @@ export default function NFTViewElement({src}) {
       { 
         src !== null 
           ? <>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  position: 'fixed',
-                  width: '100%',
-                  height: '100%',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: '1000',
-                }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    padding: '100px'
-                  }}>
+              <div className='portal-root'>
+                <div className='portal-element-container'>
                   <SVG src={src} />
                 </div>
               </div> 
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, .7)',
-              }}>
+              <div className='portal-background'>
               </div>
             </>
           : <div></div>
