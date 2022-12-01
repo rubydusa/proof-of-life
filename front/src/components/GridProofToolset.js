@@ -18,7 +18,7 @@ export default forwardRef(function GridProofToolset({
   const { address, isConnected } = useAccount();
   const [proofCalldata, setProofCalldata] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { config } = usePrepareContractWrite({
     ...GOLNFTContractConfig,
@@ -27,10 +27,10 @@ export default forwardRef(function GridProofToolset({
     enabled: proofCalldata !== null,
     onError(error) {
       if (error.reason === EXCEPTIONS.SOLUTION_ALREADY_EXISTS) {
-        setErrorMessage("Solution already exists");
+        setErrorMessage('Solution already exists');
       }
       else {
-        setErrorMessage("Something went terribly wrong...");
+        setErrorMessage('Something went terribly wrong...');
       }
     }
   });
@@ -64,7 +64,7 @@ export default forwardRef(function GridProofToolset({
    */
   useEffect(() => {
     setProofCalldata(null);
-    setErrorMessage("");
+    setErrorMessage('');
   }, [grid])
   
   /**
@@ -83,8 +83,8 @@ export default forwardRef(function GridProofToolset({
           onClick={mint}>
           Generate QuickProof
         </button> 
-        <p style={{height: "48px"}}>
-          {isGenerating && "Generating proof..."}
+        <p style={{height: '48px'}}>
+          {isGenerating && 'Generating proof...'}
           {errorMessage}
         </p>
       </div>}
@@ -109,7 +109,7 @@ const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
   /**
    * For some reason the encoding of a, b, and c in proof is really messed up
    * so you need to convert it to solidity calldata format and then extract a, b, and c
-   */
+''   */
   const resultGridNum = publicSignals[2];
   const solidityCalldata = JSON.parse(`[${await snarkjs.groth16.exportSolidityCallData(proof, publicSignals)}]`);
   const solidityCalldataArgs = [

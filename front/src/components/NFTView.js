@@ -86,7 +86,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
         <option value={ViewOwner.ALL}>All</option>
         <option value={ViewOwner.USER}>Mine</option>
       </select>
-      <div className="display-area">
+      <div className='display-area'>
         {
           pages[pageIndex] && pages[pageIndex].map(
             (data, i) => <NFTViewElement key={i} src={data}/>

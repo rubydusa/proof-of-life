@@ -41,7 +41,7 @@ export default function NFTViewWrapper() {
     return (
       <div>
         <p>
-          Please be patient
+          Loading...
         </p>
       </div>
     )
