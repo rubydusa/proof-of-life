@@ -9,7 +9,8 @@
 
 .portal-element-container {
     display: flex;
-    padding: 100px;
+    justify-content: center;
+    width: 100%;
 }
 
 /* Doesn't include background */
