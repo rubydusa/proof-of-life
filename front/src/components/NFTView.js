@@ -6,12 +6,14 @@ import { ViewOrder, ViewOwner } from '../enums';
 import GlobalContext from '../data/global';
 
 import '../styles/NFTView.css';
+import NFTViewElementModal from './NFTViewElementModal';
 
 export default function NFTView({ address, totalSupply, addressBalance }) {
   const { PAGESIZE } = useContext(GlobalContext);
   const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
   const [viewOwner, setViewOwner] = useState(ViewOwner.USER);
   const [pageIndex, setPageIndex] = useState(0);
+  const [modal, setModal] = useState(null);
   
   const { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = useNFTView({ 
     viewOrder, 
@@ -49,6 +51,11 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
+  }
+  
+  const onNFTViewElementClick = (src) => {
+    console.log(modal);    
+    setModal(src);
   }
   
   return (
@@ -89,10 +96,13 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
       <div className='display-area'>
         {
           pages[pageIndex] && pages[pageIndex].map(
-            (data, i) => <NFTViewElement key={i} src={data}/>
+            (data, i) => <NFTViewElement key={i} src={data} onClick={onNFTViewElementClick}/>
           )
         }
       </div>
+      {
+        modal !== null && <NFTViewElementModal src={modal}/>
+      }
     </div>
   )
 }
