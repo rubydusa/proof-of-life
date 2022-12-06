@@ -13,6 +13,18 @@
     width: 100%;
 }
 
+.portal-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30vw;
+    height: 80vh;
+    margin-top: 6vh;
+    padding: 2vw;
+    background-color: white;
+    border-radius: 10px;
+}
+
 /* Doesn't include background */
 .portal-root {
     display: flex;
@@ -33,4 +45,9 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0,0, 0, .7);
+}
+
+.portal-flex-overflow {
+    display: flex;
+    overflow: auto;
 }

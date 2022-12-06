@@ -101,7 +101,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
         }
       </div>
       {
-        modal !== null && <NFTViewElementModal src={modal}/>
+        modal !== null && <NFTViewElementModal src={modal} close={() => setModal(null)}/>
       }
     </div>
   )

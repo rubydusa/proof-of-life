@@ -73,7 +73,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
 
   // pages are flattened 
   const userPagesData = useContractReads({
-    contracts: addressTokenIDs
+    contracts: addressTokenIDs.data
     ? addressTokenIDs.data.pages
       .map(page => {
         return page.map(tokenId => {
