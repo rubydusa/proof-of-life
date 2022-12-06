@@ -11,7 +11,7 @@ import NFTViewElementModal from './NFTViewElementModal';
 export default function NFTView({ address, totalSupply, addressBalance }) {
   const { PAGESIZE } = useContext(GlobalContext);
   const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
-  const [viewOwner, setViewOwner] = useState(ViewOwner.USER);
+  const [viewOwner, setViewOwner] = useState(ViewOwner.ALL);
   const [pageIndex, setPageIndex] = useState(0);
   const [modal, setModal] = useState(null);
   
@@ -54,7 +54,6 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   }
   
   const onNFTViewElementClick = (src) => {
-    console.log(modal);    
     setModal(src);
   }
   
@@ -96,12 +95,12 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
       <div className='display-area'>
         {
           pages[pageIndex] && pages[pageIndex].map(
-            (data, i) => <NFTViewElement key={i} src={data} onClick={onNFTViewElementClick}/>
+            (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick}/>
           )
         }
       </div>
       {
-        modal !== null && <NFTViewElementModal src={modal} close={() => setModal(null)}/>
+        modal !== null && <NFTViewElementModal data={modal} close={() => setModal(null)}/>
       }
     </div>
   )

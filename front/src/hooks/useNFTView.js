@@ -1,24 +1,16 @@
 
-import { useContractInfiniteReads, paginatedIndexesConfig, useContractReads } from "wagmi";
+import { useContractInfiniteReads, paginatedIndexesConfig, useContractReads } from 'wagmi';
 
 import { BigNumber } from 'ethers';
-import { ViewOrder, ViewOwner } from "../enums";
+import { ViewOrder, ViewOwner } from '../enums';
 
-import { GOLNFTContractConfig } from "../data/contractConfigs";
+import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply, addressBalance, viewOwnerAddress}) {
   const pagesDataIncrement = useContractInfiniteReads({
     cacheKey: 'nftViewsIncrement',
     ...paginatedIndexesConfig(
-      (index) => {
-        return [
-          {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenURI',
-            args: [BigNumber.from(index)], 
-          }
-        ]
-      },
+      pagesDataTemplate,
       { 
         start: 0,
         perPage: pageSize,
@@ -31,15 +23,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
   const pagesDataDecrement = useContractInfiniteReads({
     cacheKey: 'nftViewsDecrement',
     ...paginatedIndexesConfig(
-      (index) => {
-        return [
-          {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenURI',
-            args: [BigNumber.from(index)], 
-          }
-        ]
-      },
+      pagesDataTemplate,
       { 
         start: totalSupply.sub(1),
         perPage: pageSize,
@@ -52,15 +36,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
   const addressTokenIDs = useContractInfiniteReads({
     cacheKey: 'nftViewsTokenIDsDecrement',
     ...paginatedIndexesConfig(
-      (index) => {
-        return [
-          {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenOfOwnerByIndex',
-            args: [viewOwnerAddress, BigNumber.from(index)], 
-          }
-        ]
-      },
+      addressTokenIDsTemplate(viewOwnerAddress),
       { 
         start: addressBalance.sub(1),
         perPage: pageSize,
@@ -75,15 +51,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
   const userPagesData = useContractReads({
     contracts: addressTokenIDs.data
     ? addressTokenIDs.data.pages
-      .map(page => {
-        return page.map(tokenId => {
-          return {
-            ...GOLNFTContractConfig,
-            functionName: 'tokenURI',
-            args: [tokenId]
-          }
-        })
-      })
+      .map(pagesUserTemplate)
       .flat()
     : []
   });
@@ -94,7 +62,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
         ? pagesDataIncrement 
         : pagesDataDecrement; 
     
-    const pages = data !== undefined ? data.pages : undefined;
+    const pages = data !== undefined ? formatPages(data.pages) : undefined;
     
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   } 
@@ -105,20 +73,19 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} = addressTokenIDs;
     const { data } = userPagesData;
     
-    // chunkify 
+    // chunkify
+    // no queries to tokenID owner so need to inject it manually
+    // formatPages is technically not neccessarry but done to ensure consistent API
     const pages = data !== undefined 
-      ? data.reduce((resultArray, item, index) => {
-        const chunkIndex = Math.floor(index / pageSize)
-
-        if (!resultArray[chunkIndex]) {
-          resultArray[chunkIndex] = [] // start a new chunk
-        }
-      
-        resultArray[chunkIndex].push(item)
-      
-        return resultArray
-      }, []) 
+      ? formatPages(
+          chunkify(data, pageSize) // construct pages
+            .map(page => {  // capsule each dataURI with an address
+              return page.map(dataURI => [dataURI, viewOwnerAddress]);
+            })
+            .map(page => page.flat()) // deconstruct capsule: [[1, 2], [3, 4]] => [1, 2, 3, 4]
+        )
       : undefined;
+
     
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   }
@@ -138,4 +105,74 @@ const nftViewAddressTokenIdsGetNextPageParam = (pageSize, addressBalance) => (la
   }
   
   return undefined;
+}
+
+const pagesDataTemplate = (index) => {
+  return [
+    {
+      ...GOLNFTContractConfig,
+      functionName: 'tokenURI',
+      args: [BigNumber.from(index)], 
+    },
+    {
+      ...GOLNFTContractConfig,
+      functionName: 'ownerOf',
+      args: [BigNumber.from(index)],
+    }
+  ]
+};
+
+const addressTokenIDsTemplate = (viewOwnerAddress) => (index) => {
+  return [
+    {
+      ...GOLNFTContractConfig,
+      functionName: 'tokenOfOwnerByIndex',
+      args: [viewOwnerAddress, BigNumber.from(index)], 
+    }
+  ]
+}
+
+const pagesUserTemplate = (page) => {
+  return page.map(tokenId => {
+    return {
+      ...GOLNFTContractConfig,
+      functionName: 'tokenURI',
+      args: [tokenId]
+    }
+  });
+}
+
+/*
+pages pre-formatted:
+[dataURI, address, dataURI, address, dataURI, address, ...]
+pages post-format:
+[{content: dataURI, address}, ...]
+
+this is because of the useContractInfiniteReads API, which doesn't capsule
+multiple contact calls by default
+*/
+const formatPages = (pages) => {
+  return pages.map(page => {
+    return chunkify(page, 2)
+      .map(([dataURI, address]) => {
+        return {
+          content: dataURI,
+          address,
+        }
+      });
+  });
+}
+
+const chunkify = (data, pageSize) => {
+  return data.reduce((resultArray, item, index) => {
+    const chunkIndex = Math.floor(index / pageSize)
+
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = [] // start a new chunk
+    }
+  
+    resultArray[chunkIndex].push(item)
+  
+    return resultArray
+  }, []);
 }

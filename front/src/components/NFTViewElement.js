@@ -1,15 +1,16 @@
 import React from 'react';
 import SVG from 'react-inlinesvg';
 
-export default function NFTViewElement({src, onClick}) {
+export default function NFTViewElement({data, onClick}) {
+  const { content } = data;
   return (
     <>
     { 
-    src !== null 
+    content !== null 
       ? <div
           className='regular-element-container'
-          onClick={() => onClick(src)}>
-          <SVG src={src} />
+          onClick={() => onClick(data)}>
+          <SVG src={content} />
         </div>
       : <div></div>
     }

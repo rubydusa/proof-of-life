@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SVG from 'react-inlinesvg';
 
-export default function NFTViewElementModal({src, close}) {
+export default function NFTViewElementModal({data, close}) {
+  const {content, address} = data;
   return ReactDOM.createPortal(
     <>
     { 
-      src !== null 
+      content !== null 
         ? <>
             <div className='portal-root'>
               <div className='portal-layout'>
@@ -23,12 +24,12 @@ export default function NFTViewElementModal({src, close}) {
                 <div className='portal-element-container portal-flex-overflow' style={{
                   flex: 12,
                 }}>
-                  <SVG src={src} />
+                  <SVG src={content} />
                 </div>
                 <p className='portal-flex-overflow' style={{
                   flex: 6,
                 }}>
-                  Occaecat cupidatat cupidatat nostrud pariatur id culpa ad dolore sit non magna. Qui consectetur est irure dolor aute aliqua. Consequat exercitation duis in veniam exercitation. Amet ipsum esse dolore excepteur labore amet exercitation pariatur sunt sint. Non cupidatat voluptate minim in reprehenderit est voluptate. Pariatur veniam pariatur et do est. 
+                  owner address: {address}
                 </p>
               </div>
             </div> 
