@@ -5,6 +5,8 @@ import NFTViewWrapper from './NFTViewWrapper';
 import { WagmiConfig } from 'wagmi';
 import { client } from '../wagmiClient';
 
+import '../styles/Portal.css';
+
 export default function App() {
   return (
     <WagmiConfig client={client}>
