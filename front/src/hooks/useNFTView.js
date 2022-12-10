@@ -43,7 +43,7 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
         direction: 'decrement',
       }
     ),
-    getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize),
+    getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize, addressBalance),
     enabled: viewOwner === ViewOwner.USER
   });
 
@@ -92,14 +92,18 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
 }
 
 const nftViewGetNextPageParam = (pageSize) => (lastPage, allPages) => {
-  return lastPage.every(el => el !== null) && lastPage.length === pageSize ? allPages.length : undefined;
+  // god fucking dammit wagmi why can't you bundle queries together
+  return lastPage.every(el => el !== null) && lastPage.length / 2 === pageSize ? allPages.length : undefined;
 }
 
 const nftViewAddressTokenIdsGetNextPageParam = (pageSize, addressBalance) => (lastPage, allPages) => {
-  const expectedNextPageParam = nftViewGetNextPageParam(pageSize)(lastPage, allPages);
-
+  // UGHHHHHHH stupid fucking bug - page sizes are inconsistent across user modes
+  // full page size of USER mode: 2, full page size of ALL mode: 4
+  // const expectedNextPageParam = nftViewGetNextPageParam(pageSize)(lastPage, allPages);
+  const expectedNextPageParam = lastPage.every(el => el !== null) && lastPage.length === pageSize ? allPages.length : undefined;
+  
   if (expectedNextPageParam !== undefined) {
-    return allPages.length * pageSize < addressBalance 
+    return allPages.length * pageSize < addressBalance.toNumber() 
       ? expectedNextPageParam
       : undefined;
   }
