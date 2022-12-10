@@ -1,7 +1,8 @@
-import { useAccount, usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { useAccount, usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
 
 import React, { useState, useEffect, useContext, forwardRef, useImperativeHandle } from 'react';
 import { useDebounce } from '../hooks';
+import MintModal from './MintModal';
 
 import { gridToNum } from '../game';
 
@@ -35,7 +36,8 @@ export default forwardRef(function GridProofToolset({
     }
   });
   
-  const { write: mint } = useContractWrite(config);
+  const { data: mintData, write: mint, isLoading: isMintLoading, isSuccess: isMintStarted, reset: resetMint } = useContractWrite(config);
+  const { data: txReceipt, error: txError, isSuccess: txSuccess, isError: txIsError } = useWaitForTransaction({ hash: mintData?.hash });
   
   /**
    * Compute calldata with a debounce of a second. 
@@ -79,7 +81,7 @@ export default forwardRef(function GridProofToolset({
       {isConnected && 
       <div>
         <button 
-          disabled={!mint}
+          disabled={!mint || isMintLoading || isMintStarted}
           onClick={mint}>
           Generate QuickProof
         </button> 
@@ -88,6 +90,16 @@ export default forwardRef(function GridProofToolset({
           {errorMessage}
         </p>
       </div>}
+      {isMintStarted && 
+      <MintModal 
+        isSuccess={txSuccess}
+        isError={txIsError}
+        receipt={txReceipt}
+        error={txError}
+        close={() => {
+          resetMint();
+        }}/>
+      }
     </>
   )
 })
