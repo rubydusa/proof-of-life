@@ -13,6 +13,7 @@ import { GOLNFTContractConfig } from '../data/contractConfigs';
  */
 export default function MintModal({ isSuccess, isError, receipt, error, close }) {
   const txSuccess = isSuccess && receipt.status === 1;
+  const isLoading = !isSuccess && !isError;
 
   const { data: src, isError: isURIError, isSuccess: isURISuccess } = useContractRead({
     ...GOLNFTContractConfig,
@@ -20,11 +21,6 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
     args: [txSuccess ? getTokenIdFromTransactionReceipt(receipt) : null],
     enabled: txSuccess,
   });
-
-  console.log(getTokenIdFromTransactionReceipt(receipt));
-  console.log(isURIError);
-  console.log(isURISuccess);
-  console.log(src);
 
   return ReactDOM.createPortal(
     <>
@@ -45,17 +41,10 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
             flex: 6, 
           }}>
             {
-              !isSuccess && !isError &&
-              <div>loading...</div>
-            }
-            {
-              txSuccess 
-                ? <SVG src={src} /> 
-                : 'Transaction reverted!'
-            }
-            {
-              isError &&
-              <div>Error! {error}</div>
+              isError ? <div>Error! {error}</div> :
+              isLoading ? <div>loading...</div> :
+              txSuccess ? <SVG src={src} /> :
+              'Transaction reverted!'
             }
           </div>
           </div>
