@@ -51,3 +51,9 @@
     display: flex;
     overflow: auto;
 }
+
+.portal-button-menu {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+}

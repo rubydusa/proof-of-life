@@ -11,10 +11,7 @@ export default function NFTViewElementModal({data, close}) {
         ? <>
             <div className='portal-root'>
               <div className='portal-layout'>
-                <div className='portal-flex-overflow' style={{
-                  display: 'flex',
-                  width: '100%',
-                  justifyContent: 'flex-start',
+                <div className='portal-flex-overflow portal-button-menu' style={{
                   flex: 1,
                 }}>
                   <button onClick={close}>
