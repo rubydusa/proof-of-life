@@ -2,19 +2,19 @@
     display: flex;
     justify-content: center;
     align-content: center;
-    height: 50vh;
+    height: 60vh;
 }
 
 .user-grid-section {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    aspect-ratio: 1 / 1;
     margin: 30px;
 }
 
 .prizenum-grid-section {
     display: flex;
     justify-content: center;
-    aspect-ratio: 1 / 1;
     margin: 30px;
 }
+

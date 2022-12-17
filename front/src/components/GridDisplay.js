@@ -31,8 +31,6 @@ export default function GridDisplay() {
   return (
     <div className='grid-display'>
       <div className='user-grid-section'>
-        {
-        /*
         <GridInputToolset 
           grid={grid}
           gridInput={gridInput}
@@ -43,24 +41,36 @@ export default function GridDisplay() {
           grid={grid}
           prizenum={prizenum}
           ref={proofToolsetRef}/>
-        */
-        }
-        <Grid 
-          className='grid'
-          grid={grid} 
-          rowCount={ROW_COUNT} 
-          colCount={COL_COUNT}
-          onClickHandler={({x, y}) => {
-            setGrid(() => flipCell(grid, x, y))
-          }}/>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            overflow: 'auto',
+            width: '100%',
+            flex: 1,
+          }}>
+          <div style={{
+            aspectRatio: '1 / 1',
+          }}>
+            <Grid 
+              grid={grid} 
+              rowCount={ROW_COUNT} 
+              colCount={COL_COUNT}
+              onClickHandler={({x, y}) => {
+                setGrid(() => flipCell(grid, x, y))
+              }}/>
+          </div>
+        </div>
       </div>
       <div className='prizenum-grid-section'>
-        <Grid
-          className='grid'
-          grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
-          rowCount={ROW_COUNT}
-          colCount={COL_COUNT}
-          onClickHandler={() => {}}/>
+        <div style={{
+          aspectRatio: '1 / 1',
+        }}>
+          <Grid
+            grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
+            rowCount={ROW_COUNT}
+            colCount={COL_COUNT}
+            onClickHandler={() => {}}/>
+        </div>
       </div>
     </div>
   )
