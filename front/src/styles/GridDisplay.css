@@ -12,9 +12,20 @@
     margin: 30px;
 }
 
+.user-grid-section-grid-container {
+    display: flex;
+    justify-content: center;
+    overflow: auto;
+    width: 100%;
+    flex: 1;
+}
+
 .prizenum-grid-section {
     display: flex;
     justify-content: center;
     margin: 30px;
 }
 
+.square-perserve {
+    aspect-ratio: 1 / 1;
+}

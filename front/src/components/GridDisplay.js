@@ -41,16 +41,8 @@ export default function GridDisplay() {
           grid={grid}
           prizenum={prizenum}
           ref={proofToolsetRef}/>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            overflow: 'auto',
-            width: '100%',
-            flex: 1,
-          }}>
-          <div style={{
-            aspectRatio: '1 / 1',
-          }}>
+        <div className='user-grid-section-grid-container'>
+          <div className='square-perserve'>
             <Grid 
               grid={grid} 
               rowCount={ROW_COUNT} 
@@ -62,9 +54,7 @@ export default function GridDisplay() {
         </div>
       </div>
       <div className='prizenum-grid-section'>
-        <div style={{
-          aspectRatio: '1 / 1',
-        }}>
+        <div className='square-perserve'>
           <Grid
             grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
             rowCount={ROW_COUNT}
