@@ -30,18 +30,23 @@ export default function GridDisplay() {
   
   return (
     <div className='grid-display'>
-      <GridInputToolset 
-        grid={grid}
-        gridInput={gridInput}
-        setGrid={(v) => setGrid(v)}
-        setGridInput={(v) => setGridInput(v)}
-        flush={flush}/>
-      <GridProofToolset
-        grid={grid}
-        prizenum={prizenum}
-        ref={proofToolsetRef}/>
-      <div className='user-grid'>
+      <div className='user-grid-section'>
+        {
+        /*
+        <GridInputToolset 
+          grid={grid}
+          gridInput={gridInput}
+          setGrid={(v) => setGrid(v)}
+          setGridInput={(v) => setGridInput(v)}
+          flush={flush}/>
+        <GridProofToolset
+          grid={grid}
+          prizenum={prizenum}
+          ref={proofToolsetRef}/>
+        */
+        }
         <Grid 
+          className='grid'
           grid={grid} 
           rowCount={ROW_COUNT} 
           colCount={COL_COUNT}
@@ -49,30 +54,14 @@ export default function GridDisplay() {
             setGrid(() => flipCell(grid, x, y))
           }}/>
       </div>
-      <div>
-        Grid Number: {gridToNum(grid).toString()}
-      </div>
-      <div className='prizenum-grid'>
+      <div className='prizenum-grid-section'>
         <Grid
+          className='grid'
           grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
           rowCount={ROW_COUNT}
           colCount={COL_COUNT}
           onClickHandler={() => {}}/>
       </div>
-      {
-        prizenum ? <div>
-          Grid Number: {prizenum.toString()}
-        </div>
-        : isLoading ? <div>
-          Please wait, loading
-        </div>
-        : isError ? <div>
-          An error occured: {error}
-        </div>
-        : <div>
-          Something went terribly wrong
-        </div>
-      }
     </div>
   )
 }

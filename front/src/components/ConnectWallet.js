@@ -1,6 +1,6 @@
 import { useConnect, useAccount } from 'wagmi'
  
-function ConnectWallet() {
+export default function ConnectWallet() {
   const { isConnected } = useAccount();
   const { connect, connectors, isLoading, pendingConnector } = useConnect();
   
@@ -9,6 +9,7 @@ function ConnectWallet() {
   return (
     <div>
       <button 
+        className='btn'
         disabled={!connector.ready}
         key={connector.id}
         onClick={() => connect({ connector })}
@@ -27,5 +28,3 @@ function ConnectWallet() {
     </div>
   )
 }
-
-export default ConnectWallet;

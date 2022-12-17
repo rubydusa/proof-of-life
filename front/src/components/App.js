@@ -6,6 +6,7 @@ import { WagmiConfig } from 'wagmi';
 import { client } from '../wagmiClient';
 
 import '../styles/Portal.css';
+import '../styles/App.css';
 
 export default function App() {
   return (

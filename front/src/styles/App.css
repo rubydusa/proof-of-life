@@ -1,0 +1,31 @@
+:root {
+    --main: #06d6a0;
+    --black: #000814;
+    --gray: #adb5bd;
+    --white: #ffffff;
+}
+
+.btn {
+    font-family: system-ui;
+    font-size: 18px;
+    color: var(--black);
+
+    background-color: var(--main);
+    padding: 0.5em 1em;
+    border-radius: 1em;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    
+    transition: 200ms;
+}
+
+.btn:hover {
+    background-color: var(--white);
+    transform: translateY(-0.1em);
+}
+
+body {
+    margin: 0px;
+    margin-bottom: 20px;
+}
