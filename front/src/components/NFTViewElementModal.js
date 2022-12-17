@@ -11,7 +11,7 @@ export default function NFTViewElementModal({data, close}) {
         ? <>
             <div className='portal-root'>
               <div className='portal-layout'>
-                <div className='portal-flex-overflow portal-button-menu' style={{
+                <div className='portal-button-menu' style={{
                   flex: 1,
                 }}>
                   <button onClick={close}>
@@ -23,11 +23,12 @@ export default function NFTViewElementModal({data, close}) {
                 }}>
                   <SVG src={content} />
                 </div>
-                <p className='portal-flex-overflow' style={{
+                <div className='portal-flex-overflow' style={{
                   flex: 6,
+                  maxWidth: '100%',
                 }}>
                   owner address: {address}
-                </p>
+                </div>
               </div>
             </div> 
             <div className='portal-background'>
