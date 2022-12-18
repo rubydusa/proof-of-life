@@ -20,9 +20,14 @@
     transition: 200ms;
 }
 
-.btn:hover {
+.btn:hover:enabled {
     background-color: var(--white);
     transform: translateY(-0.1em);
+}
+
+.btn:disabled {
+    background-color: var(--gray);
+    color: var(--white);
 }
 
 body {

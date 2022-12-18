@@ -18,10 +18,12 @@ export default function GridInputToolset({grid, gridInput, setGrid, setGridInput
   return (
     <div>
       <button
+        className='btn'
         onClick={() => flush(runSimulationStep(grid))}>
         Next State
       </button>
       <button
+        className='btn'
         onClick={() => {
           if (history.current.length >= 2) {
             const curr = history.current.pop();
@@ -33,6 +35,7 @@ export default function GridInputToolset({grid, gridInput, setGrid, setGridInput
         Back
       </button>
       <button
+        className='btn'
         onClick={() => {
           if (forwardHistory.current.length >= 1) {
             setGrid(forwardHistory.current.pop());
@@ -40,10 +43,14 @@ export default function GridInputToolset({grid, gridInput, setGrid, setGridInput
         }}>
         Forward
       </button>
-      <button onClick={() => flush(numToGrid(gridInput, GRID_SETTINGS))}>
+      <button 
+        className='btn'
+        onClick={() => flush(numToGrid(gridInput, GRID_SETTINGS))}>
         Load
       </button>
-      <button onClick={() => setGridInput(gridToNum(grid))}>
+      <button 
+        className='btn'
+        onClick={() => setGridInput(gridToNum(grid))}>
         Save
       </button>
       <input

@@ -81,11 +81,12 @@ export default forwardRef(function GridProofToolset({
       {isConnected && 
       <div>
         <button 
+          className='btn'
           disabled={!mint || isMintLoading || isMintStarted}
           onClick={mint}>
-          Generate QuickProof
+          Generate Proof
         </button> 
-        <p style={{height: '48px'}}>
+        <p style={{height: '2em'}}>
           {isGenerating && 'Generating proof...'}
           {errorMessage}
         </p>

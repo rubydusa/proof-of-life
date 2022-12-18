@@ -37,10 +37,6 @@ export default function GridDisplay() {
           setGrid={(v) => setGrid(v)}
           setGridInput={(v) => setGridInput(v)}
           flush={flush}/>
-        <GridProofToolset
-          grid={grid}
-          prizenum={prizenum}
-          ref={proofToolsetRef}/>
         <div className='user-grid-section-grid-container'>
           <div className='square-perserve'>
             <Grid 
@@ -52,6 +48,10 @@ export default function GridDisplay() {
               }}/>
           </div>
         </div>
+        <GridProofToolset
+          grid={grid}
+          prizenum={prizenum}
+          ref={proofToolsetRef}/>
       </div>
       <div className='prizenum-grid-section'>
         <div className='square-perserve'>
