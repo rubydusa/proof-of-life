@@ -34,16 +34,19 @@ export default function GridDisplay() {
       <div className='user-advanced-section' style={{
         flex: 1,
       }}>
-        <GridInputAdvancedToolset />
+        <GridInputAdvancedToolset 
+          grid={grid}
+          gridInput={gridInput}
+          setGridInput={(v) => setGridInput(v)}
+          flush={flush}
+          prizenum={prizenum}/>
       </div>
       <div className='user-grid-section' style={{
         flex: 2,
       }}>
         <GridInputToolset 
           grid={grid}
-          gridInput={gridInput}
           setGrid={(v) => setGrid(v)}
-          setGridInput={(v) => setGridInput(v)}
           flush={flush}/>
         <div className='user-grid-section-grid-container'>
           <div className='square-perserve'>

@@ -4,7 +4,7 @@ import { numToGrid, gridToNum } from '../game'
 
 import GlobalContext from '../data/global'
 
-export default function GridInputAdvancedToolset({grid, gridInput, setGridInput, flush}) {
+export default function GridInputAdvancedToolset({grid, gridInput, setGridInput, flush, prizenum}) {
   const { GRID_SETTINGS } = useContext(GlobalContext);
   return (
     <div className='grid-input-advanced-toolset'>
@@ -27,26 +27,31 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
         onClick={() => setGridInput(gridToNum(grid))}>
         Save
       </button>
-      <div style={{
-        width: '100%',
-        fontSize: '16px',
-        paddingLeft: '12px',
-        boxSizing: 'border-box',
-      }}>
+      <div className='advanced-input-label'>
         Grid Number:
       </div>
       <input
+        className='advanced-input-text-input'
         type="text"
-        style={{
-          border: '2px solid var(--gray)',
-          borderRadius: '0.5em',
-          outline: 'none',
-          padding: '8px',
-          boxSizing: 'border-box',
-        }}
         value={gridInput}
         placeholder={'Grid Number'}
         onChange={(e) => setGridInput(e.target.value)}/>
+      <div className='advanced-input-label'>
+        Current Number:
+      </div>
+      <h4 style={{
+        margin: '0px',
+      }}>
+        {grid ? gridToNum(grid).toString() : 'Grid Not Available'}
+      </h4>
+      <div className='advanced-input-label'>
+        Target Number:
+      </div>
+      <h4 style={{
+        margin: '0px',
+      }}>
+        {prizenum ? prizenum.toString() : 'Target Not Available'}
+      </h4>
     </div>
   )
 }
