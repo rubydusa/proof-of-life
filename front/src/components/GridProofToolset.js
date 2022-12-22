@@ -78,19 +78,18 @@ export default forwardRef(function GridProofToolset({
 
   return (
     <>
-      {isConnected && 
-      <div>
+      <div className='grid-proof-toolset'>
         <button 
           className='btn'
-          disabled={!mint || isMintLoading || isMintStarted}
+          disabled={!mint || isMintLoading || isMintStarted || !isConnected}
           onClick={mint}>
           Generate Proof
         </button> 
-        <p style={{height: '2em'}}>
+        <p style={{height: '1em', margin: '0px'}}>
           {isGenerating && 'Generating proof...'}
           {errorMessage}
         </p>
-      </div>}
+      </div>
       {isMintStarted && 
       <MintModal 
         isSuccess={txSuccess}
