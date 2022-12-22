@@ -23,8 +23,17 @@
 
 .prizenum-grid-section {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     margin: 30px;
+}
+
+.prizenum-grid-section-grid-container {
+    display: flex;
+    justify-content: center;
+    overflow: auto;
+    width: 100%;
+    flex: 1;
 }
 
 .square-perserve {

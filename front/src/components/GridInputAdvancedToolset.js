@@ -4,7 +4,6 @@ import { numToGrid, gridToNum } from '../game'
 
 import GlobalContext from '../data/global'
 
-
 export default function GridInputAdvancedToolset({grid, gridInput, setGridInput, flush}) {
   const { GRID_SETTINGS } = useContext(GlobalContext);
   return (

@@ -5,7 +5,7 @@ import Grid from './Grid';
 import GridInputToolset from './GridInputToolset';
 import GridProofToolset from './GridProofToolset';
 
-import { emptyGrid, flipCell, gridToNum, numToGrid } from '../game';
+import { emptyGrid, flipCell, numToGrid } from '../game';
 
 import GlobalContext from '../data/global';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
@@ -64,12 +64,14 @@ export default function GridDisplay() {
       <div className='prizenum-grid-section' style={{
         flex: 2,
       }}>
-        <div className='square-perserve'>
-          <Grid
-            grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
-            rowCount={ROW_COUNT}
-            colCount={COL_COUNT}
-            onClickHandler={() => {}}/>
+        <div className='prizenum-grid-section-grid-container'>
+          <div className='square-perserve'>
+            <Grid
+              grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
+              rowCount={ROW_COUNT}
+              colCount={COL_COUNT}
+              onClickHandler={() => {}}/>
+          </div>
         </div>
       </div>
     </div>
