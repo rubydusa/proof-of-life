@@ -20,6 +20,16 @@
     flex: 1;
 }
 
+.user-advanced-section {
+    overflow-y: auto;
+    overflow-x: hidden;
+    direction: rtl;
+}
+
+.user-advanced-section > * {
+    direction: ltr;
+}
+
 .prizenum-grid-section {
     display: flex;
     flex-direction: column;
@@ -74,4 +84,6 @@
     outline: none;
     padding: 8px;
     box-sizing: border-box;
+
+    width: 90%;
 }
