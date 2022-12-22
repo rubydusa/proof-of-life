@@ -3,6 +3,7 @@
     justify-content: center;
     align-content: center;
     height: 60vh;
+    padding: 0vh 10vw;
 }
 
 .user-grid-section {
@@ -28,6 +29,14 @@
 
 .square-perserve {
     aspect-ratio: 1 / 1;
+}
+
+.grid-input-toolset {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1em;
+    gap: 5px;
 }
 
 .grid-proof-toolset {

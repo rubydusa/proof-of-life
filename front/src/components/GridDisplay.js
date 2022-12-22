@@ -11,6 +11,7 @@ import GlobalContext from '../data/global';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 import '../styles/GridDisplay.css';
+import GridInputAdvancedToolset from './GridInputAdvancedToolset';
 
 export default function GridDisplay() {
   const { ROW_COUNT, COL_COUNT, GRID_SETTINGS } = useContext(GlobalContext);
@@ -30,7 +31,14 @@ export default function GridDisplay() {
   
   return (
     <div className='grid-display'>
-      <div className='user-grid-section'>
+      <div className='user-advanced-section' style={{
+        flex: 1,
+      }}>
+        <GridInputAdvancedToolset />
+      </div>
+      <div className='user-grid-section' style={{
+        flex: 2,
+      }}>
         <GridInputToolset 
           grid={grid}
           gridInput={gridInput}
@@ -53,7 +61,9 @@ export default function GridDisplay() {
           prizenum={prizenum}
           ref={proofToolsetRef}/>
       </div>
-      <div className='prizenum-grid-section'>
+      <div className='prizenum-grid-section' style={{
+        flex: 2,
+      }}>
         <div className='square-perserve'>
           <Grid
             grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
