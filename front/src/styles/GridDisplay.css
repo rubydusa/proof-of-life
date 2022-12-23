@@ -1,9 +1,10 @@
 .grid-display {
     display: flex;
-    justify-content: space-between;
     align-content: center;
     height: 60vh;
-    padding: 0vh 10vw;
+    padding: 0vh 5vw;
+    
+    gap: 24px;
 }
 
 .user-grid-section {
@@ -86,4 +87,18 @@
     box-sizing: border-box;
 
     width: 90%;
+}
+
+.main-content-section {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    height: 60vh;
+}
+
+.content-border {
+    box-sizing: border-box;
+    padding: 24px 0px;
+    border: 2px solid var(--gray);
+    border-radius: 12px;
 }

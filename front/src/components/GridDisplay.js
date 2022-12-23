@@ -31,7 +31,7 @@ export default function GridDisplay() {
   
   return (
     <div className='grid-display'>
-      <div className='user-advanced-section' style={{
+      <div className='user-advanced-section content-border' style={{
         flex: 1,
       }}>
         <GridInputAdvancedToolset 
@@ -41,39 +41,43 @@ export default function GridDisplay() {
           flush={flush}
           prizenum={prizenum}/>
       </div>
-      <div className='user-grid-section' style={{
-        flex: 2,
+      <div className='main-content-section content-border' style={{
+        flex: 6,
       }}>
-        <GridInputToolset 
-          grid={grid}
-          setGrid={(v) => setGrid(v)}
-          flush={flush}/>
-        <div className='user-grid-section-grid-container'>
-          <div className='square-perserve'>
-            <Grid 
-              grid={grid} 
-              rowCount={ROW_COUNT} 
-              colCount={COL_COUNT}
-              onClickHandler={({x, y}) => {
-                setGrid(() => flipCell(grid, x, y))
-              }}/>
+        <div className='user-grid-section' style={{
+          flex: 1,
+        }}>
+          <GridInputToolset 
+            grid={grid}
+            setGrid={(v) => setGrid(v)}
+            flush={flush}/>
+          <div className='user-grid-section-grid-container'>
+            <div className='square-perserve'>
+              <Grid 
+                grid={grid} 
+                rowCount={ROW_COUNT} 
+                colCount={COL_COUNT}
+                onClickHandler={({x, y}) => {
+                  setGrid(() => flipCell(grid, x, y))
+                }}/>
+            </div>
           </div>
+          <GridProofToolset
+            grid={grid}
+            prizenum={prizenum}
+            ref={proofToolsetRef}/>
         </div>
-        <GridProofToolset
-          grid={grid}
-          prizenum={prizenum}
-          ref={proofToolsetRef}/>
-      </div>
-      <div className='prizenum-grid-section' style={{
-        flex: 2,
-      }}>
-        <div className='prizenum-grid-section-grid-container'>
-          <div className='square-perserve'>
-            <Grid
-              grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
-              rowCount={ROW_COUNT}
-              colCount={COL_COUNT}
-              onClickHandler={() => {}}/>
+        <div className='prizenum-grid-section' style={{
+          flex: 1,
+        }}>
+          <div className='prizenum-grid-section-grid-container'>
+            <div className='square-perserve'>
+              <Grid
+                grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}
+                rowCount={ROW_COUNT}
+                colCount={COL_COUNT}
+                onClickHandler={() => {}}/>
+            </div>
           </div>
         </div>
       </div>
