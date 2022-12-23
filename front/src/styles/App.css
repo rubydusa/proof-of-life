@@ -23,7 +23,8 @@
 .btn:hover:enabled {
     background-color: var(--white);
     transform: translateY(-0.1em);
-    outline: 2px solid var(--main);
+    /* lol it's so fun when it pops */
+    border: 2px solid var(--main);
 }
 
 .btn:disabled {
