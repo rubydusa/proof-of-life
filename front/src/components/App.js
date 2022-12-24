@@ -1,4 +1,5 @@
 import Navbar from './Navbar';
+import About from './About';
 import GridDisplay from './GridDisplay';
 import NFTViewWrapper from './NFTViewWrapper';
 
@@ -12,6 +13,7 @@ export default function App() {
   return (
     <WagmiConfig client={client}>
       <Navbar/>
+      <About />
       <GridDisplay/>
       <NFTViewWrapper />
     </WagmiConfig>
