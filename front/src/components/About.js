@@ -6,7 +6,9 @@ import '../styles/About.css';
 export default function About() {
   return (
     <div className='about'>
-        <div>
+        <div style={{
+            flex: 3,
+        }}>
             <h1>
                 Proof of Life: Zero-Knowledge-Proof Implementation of <br/>
                 Conway's Game of Life
@@ -38,7 +40,12 @@ export default function About() {
                 </a>
             </p>
         </div>
-        <SVG src='gol.svg'/>
+        <div style={{
+            display: 'flex',
+            flex: 2,
+        }}>
+            <SVG src='gol.svg'/>
+        </div>
     </div>
   )
 }
