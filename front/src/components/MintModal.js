@@ -33,9 +33,15 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
           <div className='portal-flex-overflow portal-button-menu' style={{
             flex: 1,
           }}>
-            <button onClick={close}>
+            <button class='btn' onClick={close}>
               Close
             </button>
+          </div>
+          <div className='portal-flex-overflow' style={{
+            flex: 1,
+            fontWeight: 'bold',
+          }}>
+            Congratulations!
           </div>
           <div className='portal-element-container portal-flex-overflow' style={{
             flex: 6, 

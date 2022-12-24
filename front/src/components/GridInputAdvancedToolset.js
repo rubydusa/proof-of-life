@@ -8,7 +8,10 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
   const { GRID_SETTINGS } = useContext(GlobalContext);
   return (
     <div className='grid-input-advanced-toolset'>
-      <h2>
+      <h2 style={{
+        textAlign: 'center',
+        padding: '0px 2px',
+      }}>
         Advanced Toolset
       </h2>
       <button 
