@@ -5,8 +5,8 @@ export default function Cell({x, y, state, onClickHandler}) {
     <div
     onClick={() => onClickHandler({x, y, state})}
     style={{
-      backgroundColor: state ? 'black' : undefined,
-      border: '1px solid black'
+      backgroundColor: state ? 'var(--black)' : 'var(--extra-white)',
+      border: '2px solid var(--black)',
     }}>
     </div>
   )

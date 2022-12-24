@@ -12,7 +12,7 @@
     height: 80vh;
     margin-top: 6vh;
     padding: 2vw;
-    background-color: white;
+    background-color: var(--white);
     border-radius: 10px;
 }
 
@@ -35,7 +35,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0,0, 0, .7);
+    background-color: rgba(var(--black-values), 0.7);
 }
 
 .portal-flex-overflow {

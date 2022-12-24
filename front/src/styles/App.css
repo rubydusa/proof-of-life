@@ -2,7 +2,18 @@
     --main: #06d6a0;
     --black: #000814;
     --gray: #adb5bd;
-    --white: #ffffff;
+    --white: #f5fffa;
+    --black-values: 0, 8, 20;
+    --extra-white: #ffffff;
+}
+
+.content-border {
+    box-sizing: border-box;
+    padding: 24px 0px;
+    border: 2px solid var(--gray);
+    border-radius: 12px;
+    
+    background-color: rgba(var(--black-values), 0.07);
 }
 
 .btn {
@@ -37,7 +48,7 @@
     font-size: 18px;
     color: var(--black);
 
-    background-color: var(--white);
+    background-color: var(--extra-white);
     padding: 0.5em 1em;
     border-color: var(--gray);
     border-radius: 1em;
@@ -50,6 +61,7 @@
 body {
     margin: 0px;
     margin-bottom: 20px;
+    background-color: var(--white);
 }
 
 ::-webkit-scrollbar-track {

@@ -96,13 +96,6 @@
     height: 60vh;
 }
 
-.content-border {
-    box-sizing: border-box;
-    padding: 24px 0px;
-    border: 2px solid var(--gray);
-    border-radius: 12px;
-}
-
 .headline {
   font-size: 56px;
   text-align: center;
