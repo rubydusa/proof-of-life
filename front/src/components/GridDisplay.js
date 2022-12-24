@@ -31,11 +31,8 @@ export default function GridDisplay() {
   
   return (
     <>
-    <hr />
-    <h1 style={{
-      fontSize: '56px',
-      textAlign: 'center',
-    }}>
+    <hr className='horizontal-rule'/>
+    <h1 className='headline'>
       Proof of Life
     </h1>
     <div className='grid-display'>

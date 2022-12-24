@@ -1,0 +1,12 @@
+.about {
+    display: flex;
+    
+    box-sizing: border-box;
+    margin-top: 2em;
+    min-height: 100vh;
+    padding: 0px 5vw;
+}
+
+.about-text-section-paragraph {
+    font-size: 24px;
+}

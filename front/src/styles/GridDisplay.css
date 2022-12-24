@@ -102,3 +102,14 @@
     border: 2px solid var(--gray);
     border-radius: 12px;
 }
+
+.headline {
+  font-size: 56px;
+  text-align: center;
+}
+
+.horizontal-rule {
+    background-color: var(--gray); 
+    height: 1px; 
+    border: 0;
+}
