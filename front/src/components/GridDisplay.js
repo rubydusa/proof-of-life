@@ -30,6 +30,14 @@ export default function GridDisplay() {
   }
   
   return (
+    <>
+    <hr />
+    <h1 style={{
+      fontSize: '56px',
+      textAlign: 'center',
+    }}>
+      Proof of Life
+    </h1>
     <div className='grid-display'>
       <div className='user-advanced-section content-border' style={{
         flex: 1,
@@ -82,5 +90,6 @@ export default function GridDisplay() {
         </div>
       </div>
     </div>
+    </>
   )
 }

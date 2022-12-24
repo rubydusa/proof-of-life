@@ -14,8 +14,12 @@ export default function App() {
     <WagmiConfig client={client}>
       <Navbar/>
       <About />
+      <div style={{
+        minHeight: '100vh',
+      }}>
       <GridDisplay/>
       <NFTViewWrapper />
+      </div>
     </WagmiConfig>
   );
 }

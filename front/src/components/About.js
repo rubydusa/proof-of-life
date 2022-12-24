@@ -3,6 +3,8 @@ import React from 'react'
 export default function About() {
   return (
     <div style={{
+        boxSizing: 'border-box',
+        marginTop: '2em',
         minHeight: '100vh',
         padding: '0px 5vw',
     }}>
