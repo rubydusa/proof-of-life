@@ -32,6 +32,21 @@
     color: var(--white);
 }
 
+.slct {
+    font-family: system-ui;
+    font-size: 18px;
+    color: var(--black);
+
+    background-color: var(--white);
+    padding: 0.5em 1em;
+    border-color: var(--gray);
+    border-radius: 1em;
+    outline: none;
+    cursor: pointer;
+    
+    transition: 200ms;
+}
+
 body {
     margin: 0px;
     margin-bottom: 20px;

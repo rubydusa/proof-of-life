@@ -59,40 +59,47 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   
   return (
     <div className='nft-view'>
-      <button 
-        disabled={pageIndex === pages.length - 1}
-        onClick={() => {
-          setPageIndex(currentIndex => currentIndex + 1);
-        }}>
-        Next Page
-      </button>
-      <button
-        disabled={pageIndex === 0}
-        onClick={() => {
-          setPageIndex(currentIndex => currentIndex === 0 ? 0 : currentIndex - 1);
-        }}>
-        Previous Page
-      </button>
-      <select 
-        value={viewOrder} 
-        onChange={(e) => {
-          setViewOrder(parseInt(e.target.value));
-          setPageIndex(0);
-        }}
-        disabled={viewOwner === ViewOwner.USER}>
-        <option value={ViewOrder.FIRST}>First</option>
-        <option value={ViewOrder.LAST}>Last</option>
-      </select>
-      <select 
-        value={viewOwner} 
-        onChange={(e) => {
-          setViewOwner(parseInt(e.target.value));
-          setPageIndex(0);
-        }}>
-        <option value={ViewOwner.ALL}>All</option>
-        <option value={ViewOwner.USER}>Mine</option>
-      </select>
-      <div className='display-area'>
+      <div className='content-border'>
+        <div className='nft-view-button-menu'>
+          <button 
+            className='btn'
+            disabled={pageIndex === pages.length - 1}
+            onClick={() => {
+              setPageIndex(currentIndex => currentIndex + 1);
+            }}>
+            Next Page
+          </button>
+          <button
+            className='btn'
+            disabled={pageIndex === 0}
+            onClick={() => {
+              setPageIndex(currentIndex => currentIndex === 0 ? 0 : currentIndex - 1);
+            }}>
+            Previous Page
+          </button>
+          <select 
+            className='slct'
+            value={viewOrder} 
+            onChange={(e) => {
+              setViewOrder(parseInt(e.target.value));
+              setPageIndex(0);
+            }}
+            disabled={viewOwner === ViewOwner.USER}>
+            <option value={ViewOrder.FIRST}>First</option>
+            <option value={ViewOrder.LAST}>Last</option>
+          </select>
+          <select 
+            className='slct'
+            value={viewOwner} 
+            onChange={(e) => {
+              setViewOwner(parseInt(e.target.value));
+              setPageIndex(0);
+            }}>
+            <option value={ViewOwner.ALL}>All</option>
+            <option value={ViewOwner.USER}>Mine</option>
+          </select>
+        </div>
+      <div className='nft-view-display-area'>
         {
           pages[pageIndex] && pages[pageIndex].map(
             (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick}/>
@@ -102,6 +109,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
       {
         modal !== null && <NFTViewElementModal data={modal} close={() => setModal(null)}/>
       }
+      </div>
     </div>
   )
 }

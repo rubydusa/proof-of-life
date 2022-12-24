@@ -8,7 +8,7 @@ export default function NFTViewElement({data, onClick}) {
     { 
     content !== null 
       ? <div
-          className='regular-element-container'
+          className='nft-view-regular-element-container'
           onClick={() => onClick(data)}>
           <SVG src={content} />
         </div>

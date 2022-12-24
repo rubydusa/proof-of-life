@@ -1,8 +1,18 @@
-.display-area {
+.nft-view {
+    padding: 5vh 5vw;
+}
+
+.nft-view-display-area {
     display: flex;
     height: 20vh;
 }
 
-.regular-element-container {
+.nft-view-regular-element-container {
     display: flex;
+}
+
+.nft-view-button-menu {
+    display: flex;
+    padding-left: 12px;
+    gap: 5px;
 }
