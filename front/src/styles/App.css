@@ -57,6 +57,11 @@
     border: 2px solid var(--main);
 }
 
+.restrict-bounce:hover:enabled {
+    border: none;
+    outline: 2px solid var(--main);
+}
+
 .btn:disabled {
     background-color: var(--gray);
     color: var(--white);

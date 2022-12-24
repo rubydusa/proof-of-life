@@ -3,4 +3,5 @@
     background-color: var(--navbar-color);
     padding: 15px 10px;
     margin-bottom: 20px;
+    gap: 10px;
 }

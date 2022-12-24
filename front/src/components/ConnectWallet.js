@@ -10,7 +10,7 @@ export default function ConnectWallet() {
   return (
     <div>
       <button 
-        className='btn'
+        className='btn restrict-bounce'
         disabled={!connector.ready || isConnected || isConnecting}
         key={connector.id}
         onClick={() => connect({ connector })}
