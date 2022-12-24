@@ -1,6 +1,6 @@
 .navbar {
     display: flex;
-    background-color: var(--black);
+    background-color: var(--navbar-color);
     padding: 15px 10px;
     margin-bottom: 20px;
 }

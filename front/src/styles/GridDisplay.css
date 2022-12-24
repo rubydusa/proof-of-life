@@ -102,7 +102,7 @@
 }
 
 .horizontal-rule {
-    background-color: var(--gray); 
+    background-color: var(--border-color); 
     height: 1px; 
     border: 0;
 }

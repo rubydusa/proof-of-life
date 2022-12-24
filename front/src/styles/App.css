@@ -1,19 +1,38 @@
 :root {
     --main: #06d6a0;
-    --black: #000814;
-    --gray: #adb5bd;
-    --white: #f5fffa;
-    --black-values: 0, 8, 20;
+
     --extra-white: #ffffff;
+    --white: #f5fffa;
+    --gray: #adb5bd;
+    --mid-light-gray: #646468;
+    --mid-gray: #28282A;
+    --mid-white: #d8dadc;
+    --mid-main: #E4ECE9;
+    --dark-gray: #1a1a1b;
+    --black: #000814;
+
+    --text-color: var(--black);
+    --page-color: var(--white);
+    --navbar-color: var(--black);
+    --border-color: var(--gray);
+    --bordered-content-color: var(--mid-main);
+
+    /*
+    --text-color: var(--mid-white);
+    --page-color: var(--dark-gray);
+    --navbar-color: var(--black);
+    --border-color: var(--mid-light-gray);
+    --bordered-content-color: var(--mid-gray);
+    */
 }
 
 .content-border {
     box-sizing: border-box;
     padding: 24px 0px;
-    border: 2px solid var(--gray);
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     
-    background-color: rgba(var(--black-values), 0.07);
+    background-color: var(--bordered-content-color);
 }
 
 .btn {
@@ -61,7 +80,7 @@
 body {
     margin: 0px;
     margin-bottom: 20px;
-    background-color: var(--white);
+    background-color: var(--page-color);
 }
 
 ::-webkit-scrollbar-track {
@@ -84,4 +103,5 @@ body {
 
 html > * {
     font-family: system-ui;
+    color: var(--text-color);
 }
