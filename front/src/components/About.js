@@ -19,7 +19,7 @@ export default function About() {
             <p className='about-text-section-paragraph'>
                 Your goal is to find a board configuration that preceeds the <b>Target Board</b> by 3 generations.<br/>
                 Once found, generate a Zero-Knowledge proof of your <b>Solution</b>, and get a corresponding NFT!<br/><br/>
-                The puzzle has an expiration period of 10 minutes, after which any solution will reset it and the target board
+                The puzzle has an expiration period of 10 minutes, after which any solution will reset it and the target board.
             </p>
             <h2>
                 Why Zero-Knowledge
@@ -27,7 +27,7 @@ export default function About() {
             <p className='about-text-section-paragraph'>                
                 With Zero-Knowledge, You can prevent frontrunning by making the proofs depend on the sender address. <br/>
                 Also, it eliminates the need for on-chain validation that can cost a lot of gas. <br/><br/>
-                Your solutions remain private the entire time
+                Your solutions remain private the entire time.
             </p>
             <h2>
                 Caveats

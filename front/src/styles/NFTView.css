@@ -9,6 +9,7 @@
 
 .nft-view-regular-element-container {
     display: flex;
+    cursor: pointer;
 }
 
 .nft-view-button-menu {
