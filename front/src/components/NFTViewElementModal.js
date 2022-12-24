@@ -14,7 +14,7 @@ export default function NFTViewElementModal({data, close}) {
                 <div className='portal-button-menu' style={{
                   flex: 1,
                 }}>
-                  <button onClick={close}>
+                  <button class='btn' onClick={close}>
                     Close
                   </button>
                 </div>
@@ -26,8 +26,10 @@ export default function NFTViewElementModal({data, close}) {
                 <div className='portal-flex-overflow' style={{
                   flex: 6,
                   maxWidth: '100%',
+                  boxSizing: 'border-box',
+                  marginTop: '24px',
                 }}>
-                  owner address: {address}
+                  Owner Address: <b>{address}</b>
                 </div>
               </div>
             </div> 
