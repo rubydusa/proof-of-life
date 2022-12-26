@@ -1,5 +1,6 @@
 .grid-display {
     display: flex;
+    justify-content: center;
     align-content: center;
     height: 60vh;
     padding: 0vh 5vw;
@@ -22,6 +23,7 @@
 }
 
 .user-advanced-section {
+    max-width: 30vh;
     overflow-y: auto;
     overflow-x: hidden;
     direction: rtl;
@@ -94,6 +96,8 @@
     justify-content: space-between;
     align-content: center;
     height: 60vh;
+    max-width: 120vh;
+    gap: 10px;
 }
 
 .headline {
