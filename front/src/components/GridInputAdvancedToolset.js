@@ -1,11 +1,21 @@
-import React, { useContext } from 'react'
+import React, { useContext, useReducer } from 'react'
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import { numToGrid, gridToNum } from '../game'
 
 import GlobalContext from '../data/global'
+import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 export default function GridInputAdvancedToolset({grid, gridInput, setGridInput, flush, prizenum}) {
   const { GRID_SETTINGS } = useContext(GlobalContext);
+  const { config: newChallengeConfig, error: newChallengeError } = usePrepareContractWrite({
+    ...GOLNFTContractConfig,
+    functionName: 'updateExpiredPrizenum',
+  });
+  
+  const { write: generateNewChallenge } = useContractWrite(newChallengeConfig);
+  const [hasGeneratedNewChallenge, setHasGeneratedNewChallenge] = useReducer(() => true, false);
+
   return (
     <div className='grid-input-advanced-toolset'>
       <h2 style={{
@@ -55,6 +65,18 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
       }}>
         {prizenum ? prizenum.toString() : 'Target Not Available'}
       </h4>
+      <button
+        disabled={!generateNewChallenge || hasGeneratedNewChallenge}
+        className='btn'
+        onClick={() => {
+          generateNewChallenge();
+          setHasGeneratedNewChallenge();
+        }}>
+        New Challenge
+      </button>
+      <div className='advanced-input-label'>
+        {hasGeneratedNewChallenge && "After transacting please wait for confirmation from your wallet and restart the page"}
+      </div>
     </div>
   )
 }
