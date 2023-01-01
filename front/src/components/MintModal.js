@@ -53,9 +53,9 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
               'Transaction reverted!'
             }
           </div>
-          </div>
         </div>
-        <div className='portal-background'>
+      </div>
+      <div className='portal-background'>
       </div>
     </>,
     document.getElementById('portal')

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 
 export function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -22,5 +22,13 @@ export function useDebounce(value, delay) {
     () => {
       clearTimeout(lastTimer.current);
     }
+  ]
+}
+
+export function useForceUpdate() {
+  const [forceNonce, dispatch] = useReducer(state => state + 1, 0);
+  return [
+    forceNonce,
+    dispatch,
   ]
 }

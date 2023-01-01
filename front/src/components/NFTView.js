@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import useNFTView from '../hooks/useNFTView';
 import NFTViewElement from './NFTViewElement';
+import { useForceUpdate } from '../hooks';
 import { ViewOrder, ViewOwner } from '../enums';
 
 import GlobalContext from '../data/global';
@@ -14,6 +15,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   const [viewOwner, setViewOwner] = useState(ViewOwner.ALL);
   const [pageIndex, setPageIndex] = useState(0);
   const [modal, setModal] = useState(null);
+  const [forceNonce, forceUpdate] = useForceUpdate();
   
   const { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = useNFTView({ 
     viewOrder, 
@@ -98,11 +100,16 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             <option value={ViewOwner.ALL}>All</option>
             <option value={ViewOwner.USER}>Mine</option>
           </select>
+          <button
+            className='btn'
+            onClick={forceUpdate}>
+            Refresh Animation
+          </button>
         </div>
       <div className='nft-view-display-area'>
         {
           pages[pageIndex] && pages[pageIndex].map(
-            (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick}/>
+            (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick} forceNonce={forceNonce}/>
           )
         }
       </div>

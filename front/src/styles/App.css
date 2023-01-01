@@ -110,3 +110,7 @@ html > * {
     font-family: system-ui;
     color: var(--text-color);
 }
+
+iframe {
+    border: none;
+}
