@@ -10,7 +10,7 @@ export default function NFTViewElement({data, onClick, forceNonce}) {
       ? <div
           className='nft-view-regular-element-container'>
           <div 
-            className='nft-view-invisible-cover'
+            className='invisible-cover'
             onClick={() => onClick(data)}>
           </div>
           <iframe 

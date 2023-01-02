@@ -42,6 +42,7 @@
 .prizenum-grid-section-grid-container {
     display: flex;
     justify-content: center;
+    position: relative;
     overflow: auto;
     width: 100%;
     flex: 1;

@@ -14,8 +14,6 @@
     padding: 2vw;
     background-color: var(--page-color);
     border-radius: 10px;
-    /* visible overflow because button menus usually on top*/
-    overflow: visible;
 }
 
 /* Doesn't include background */
@@ -50,4 +48,6 @@
     width: 100%;
     justify-content: flex-start;
     gap: 5px;
+    /* visible overflow because button menus usually on top*/
+    overflow: visible;
 }

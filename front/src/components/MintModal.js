@@ -8,6 +8,7 @@ import { BigNumber } from 'ethers';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 import XSVGIcon from './ButtonIcons/XSVGIcon';
+import LoadingSVGIcon from './AnimatedIcons/LoadingSVGIcon';
 
 /*
  * Note: isError and error are not related to if the transaction reverted, but rather if the process of
@@ -50,7 +51,7 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
           }}>
             {
               isError ? <div>Error! {error}</div> :
-              isLoading ? <div>loading...</div> :
+              isLoading ? <div><LoadingSVGIcon/></div> :
               txSuccess ? <SVG src={src} /> :
               'Transaction reverted!'
             }

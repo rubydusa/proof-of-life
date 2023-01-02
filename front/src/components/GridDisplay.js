@@ -12,6 +12,7 @@ import { GOLNFTContractConfig } from '../data/contractConfigs';
 
 import '../styles/GridDisplay.css';
 import GridInputAdvancedToolset from './GridInputAdvancedToolset';
+import LoadingSVGIcon from './AnimatedIcons/LoadingSVGIcon';
 
 export default function GridDisplay() {
   const { ROW_COUNT, COL_COUNT, GRID_SETTINGS } = useContext(GlobalContext);
@@ -76,6 +77,10 @@ export default function GridDisplay() {
           flex: 1,
         }}>
           <div className='prizenum-grid-section-grid-container'>
+            <div className='invisible-cover'>
+            {!prizenum && 
+              <LoadingSVGIcon/>}
+            </div>
             <div className='square-perserve'>
               <Grid
                 grid={prizenum ? numToGrid(prizenum, GRID_SETTINGS) : emptyGrid(GRID_SETTINGS)}

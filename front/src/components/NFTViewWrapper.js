@@ -4,6 +4,7 @@ import React from 'react'
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 import NFTView from './NFTView';
 import { Status } from '../enums';
+import LoadingSVGIcon from './AnimatedIcons/LoadingSVGIcon';
 
 // this is a hacky way to make sure the pagination starts with a valid address and totalSupply
 // I should have used services instead of this shitty react library... :(
@@ -40,9 +41,7 @@ export default function NFTViewWrapper() {
   else if (totalSupplyStatus === Status.LOADING || addressBalanceStatus === Status.LOADING) {
     return (
       <div>
-        <p>
-          Loading...
-        </p>
+        <LoadingSVGIcon/>
       </div>
     )
   }
