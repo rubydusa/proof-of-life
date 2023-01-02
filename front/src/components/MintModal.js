@@ -7,6 +7,8 @@ import { useContractRead } from 'wagmi';
 import { BigNumber } from 'ethers';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 
+import XSVGIcon from './ButtonIcons/XSVGIcon';
+
 /*
  * Note: isError and error are not related to if the transaction reverted, but rather if the process of
  * waiting for the transaction itself had any failures
@@ -34,15 +36,15 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
             flex: 1,
           }}>
             <button class='btn' onClick={close}>
-              Close
+              <XSVGIcon/>
             </button>
           </div>
-          <div className='portal-flex-overflow' style={{
+          {txSuccess && <div className='portal-flex-overflow' style={{
             flex: 1,
             fontWeight: 'bold',
           }}>
             Congratulations!
-          </div>
+          </div>}
           <div className='portal-element-container portal-flex-overflow' style={{
             flex: 6, 
           }}>

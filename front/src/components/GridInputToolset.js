@@ -1,6 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react';
 
-import { runSimulationStep } from '../game'
+import { runSimulationStep } from '../game';
+
+import ArrowSVGIcon from './ButtonIcons/ArrowSVGIcon';
+import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
 
 export default function GridInputToolset({grid, setGrid, flush}) {
   const history = useRef([]);
@@ -17,7 +20,7 @@ export default function GridInputToolset({grid, setGrid, flush}) {
       <button
         className='btn'
         onClick={() => flush(runSimulationStep(grid))}>
-        Next State
+        <PlaySVGIcon/>
       </button>
       <button
         className='btn'
@@ -29,7 +32,7 @@ export default function GridInputToolset({grid, setGrid, flush}) {
             setGrid(prev);
           } 
         }}>
-        Back
+        <ArrowSVGIcon backwards={true}/>
       </button>
       <button
         className='btn'
@@ -38,7 +41,7 @@ export default function GridInputToolset({grid, setGrid, flush}) {
             setGrid(forwardHistory.current.pop());
           }
         }}>
-        Forward
+        <ArrowSVGIcon backwards={false}/>
       </button>
     </div>
   )

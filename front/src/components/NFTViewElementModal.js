@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { useForceUpdate } from '../hooks';
 
+import XSVGIcon from './ButtonIcons/XSVGIcon';
+import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
+
 export default function NFTViewElementModal({data, close}) {
   const {content, address} = data;
   const [forceNonce, forceUpdate] = useForceUpdate();
@@ -17,10 +20,10 @@ export default function NFTViewElementModal({data, close}) {
                   flex: 1,
                 }}>
                   <button class='btn' onClick={close}>
-                    Close
+                    <XSVGIcon/> 
                   </button>
                   <button class='btn' onClick={forceUpdate}>
-                    Refresh
+                    <PlaySVGIcon/>
                   </button>
                 </div>
                 <div className='portal-element-container portal-flex-overflow' style={{

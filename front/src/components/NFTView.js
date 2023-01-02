@@ -9,6 +9,8 @@ import GlobalContext from '../data/global';
 import '../styles/NFTView.css';
 import NFTViewElementModal from './NFTViewElementModal';
 
+import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
+
 export default function NFTView({ address, totalSupply, addressBalance }) {
   const { PAGESIZE } = useContext(GlobalContext);
   const [viewOrder, setViewOrder] = useState(ViewOrder.LAST);
@@ -63,6 +65,11 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
     <div className='nft-view'>
       <div className='content-border'>
         <div className='nft-view-button-menu'>
+          <button
+            className='btn'
+            onClick={forceUpdate}>
+            <PlaySVGIcon/>
+          </button>
           <button 
             className='btn'
             disabled={pageIndex === pages.length - 1}
@@ -100,11 +107,6 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             <option value={ViewOwner.ALL}>All</option>
             <option value={ViewOwner.USER}>Mine</option>
           </select>
-          <button
-            className='btn'
-            onClick={forceUpdate}>
-            Refresh Animation
-          </button>
         </div>
       <div className='nft-view-display-area'>
         {

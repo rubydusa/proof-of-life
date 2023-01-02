@@ -114,3 +114,9 @@ html > * {
 iframe {
     border: none;
 }
+
+.svg-btn-icon {
+    width: 100%;
+    height: 1em;
+    fill: var(--black);
+}
