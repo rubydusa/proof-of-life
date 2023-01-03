@@ -6,18 +6,19 @@ library WeightedBitsPRNG {
 		uint256 state;
 	}
 
-	uint256 private constant MAX_INT = 2**256 - 1; 
-	
 	/*
-	 * return a uint256 where the probabilty of a bit being 1 is p / 2 ** d
+	 * returns weighted probabilty bits with distribution p / 2 ** d
+	 * d == 0 acts like d == 1, returning 1 / 2 distribution
+	 * p == 0 acts like p == 1, returning 1 / 2 ** d
 	 * 
-	 * prng must be seeded first
-	 * assumes p / 2 ** d is an irreducible fraction
-	 * d = 0 and d = 1 act the same
+	 * assumptions:
+	 * - prng is seeded
+	 * - p / 2 ** d is irreducable and less than one
 	 */
 	function weightedBits(MemoryUint256 memory prng, uint256 p, uint256 d) internal pure returns (uint256 result) {
 		assembly {
-			result := MAX_INT
+			result := keccak256(prng, 0x20)
+			mstore(prng, result)
 
 			for { let i := 1 } lt(i, d) { i := add(i, 1) } {
 				let rnd := keccak256(prng, 0x20)
