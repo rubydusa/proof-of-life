@@ -1,9 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
-library WeightedBitsPRNG {
+library WeightedBits {
 	struct MemoryUint256 {
 		uint256 state;
+	}
+
+	/*
+	 * Makes Testing easier and computing values off-chain
+	 */
+	function weightedBits(MemoryUint256 memory prng, uint256 p, uint256 d) external pure returns (uint256 result) {
+		result = _weightedBits(prng, p, d);
 	}
 
 	/*
@@ -15,7 +22,7 @@ library WeightedBitsPRNG {
 	 * - prng is seeded
 	 * - p / 2 ** d is irreducable and less than one
 	 */
-	function weightedBits(MemoryUint256 memory prng, uint256 p, uint256 d) internal pure returns (uint256 result) {
+	function _weightedBits(MemoryUint256 memory prng, uint256 p, uint256 d) internal pure returns (uint256 result) {
 		assembly {
 			result := keccak256(prng, 0x20)
 			mstore(prng, result)
@@ -24,7 +31,7 @@ library WeightedBitsPRNG {
 				let rnd := keccak256(prng, 0x20)
 				mstore(prng, rnd)
 
-				let i_bit := and(shr(p, i), 1)
+				let i_bit := and(shr(i, p), 1)
 
 				let w_and := and(result, rnd)
 				let w_or := or(result, rnd)
