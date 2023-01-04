@@ -93,11 +93,13 @@ task(TASK_CIRCOM_COMPILE, "Compiles all circuits in circuits directory")
 		}
 	});
 
+/*
 task(TASK_COMPILE, "hook compile task to include circuit compilation")
 	.setAction(async (_args, hre, runSuper) => {
 		await hre.run(TASK_CIRCOM_COMPILE);
 		await runSuper();
 	});
+*/
 
 /*
  * HRE Extension

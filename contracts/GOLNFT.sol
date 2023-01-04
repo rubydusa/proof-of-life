@@ -5,22 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
-interface IGOLSVG {
-    function svg(uint256 n, uint256 data) external pure returns (string memory);
-}
+import "./interfaces/IGroth16Verifier.sol";
+import "./interfaces/IRandom.sol";
+import "./interfaces/IGOLSVG.sol";
 
-interface IRandom {
-    function random(uint256 salt) external view returns (uint256);
-}
-
-interface IGroth16Verifier {
-    function verifyProof(
-		uint256[2] memory a,
-		uint256[2][2] memory b,
-		uint256[2] memory c,
-		uint256[4] memory input
-    ) external view returns (bool r);
-}
 
 contract GOLNFT is Ownable, ERC721Enumerable {
     uint256 immutable public W;

@@ -1,8 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract GOLSVG {
+import "./interfaces/IGOLSVG.sol";
+
+contract GOLSVG is IGOLSVG {
     using Strings for uint256;
 
     uint256 constant W = 8;

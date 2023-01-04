@@ -6,8 +6,9 @@ const W = "8";
 const H = "8";
 const EXPIRY = "900";
 
-const P = "1";
-const BITS_OUT_OF = "8";
+// on average, P / 2 ** BITS_OUT_OF alive cells in a random board generation 
+const P = "5";
+const BITS_OUT_OF = "6";
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -26,7 +27,7 @@ async function main() {
     const preBalance = await deployerAccount.getBalance();
 
     await sleep(5000);
-    const golRandom = await GOLRandom.deploy(W, H, P, BITS_OUT_OF);
+    const golRandom = await GOLRandom.deploy(P, BITS_OUT_OF);
     await sleep(5000);
     const golSVG = await GOLSVG.deploy();
     await sleep(5000);
@@ -35,7 +36,7 @@ async function main() {
     const golNFT = await GOLNFT.deploy(golVerifier.address, golRandom.address, golSVG.address, W, H, EXPIRY); 
     
     const postBalance = await deployerAccount.getBalance();
-
+    
     const deploymentData = {
         deployerAddress: deployerAccount.address,
         deploymentGasCost: preBalance.sub(postBalance).toString(),
