@@ -41,12 +41,10 @@ contract GOLNFT is Ownable, ERC721Enumerable {
 		require(_exists(tokenId), "GOLNFT: TokenID does not exist!");
 		_;
 	}
-
+    
     modifier updatePrizenum() {
         _;
-        if (isExpired()) {
-            _updatePrizenum();
-        }
+        _updatePrizenum();
     }
 
     function tokenURI(uint256 tokenId) public view override tokenIdExists(tokenId) returns (string memory) {
@@ -82,7 +80,9 @@ contract GOLNFT is Ownable, ERC721Enumerable {
 	}
     
     // available in case current prizenum doesn't have a solution
-    function updateExpiredPrizenum() external updatePrizenum {}
+    function updateExpiredPrizenum() external updatePrizenum {
+        require(isExpired(), "GOLNFT: Not Expired");
+    }
     // for testing purposes only - renounce ownership after minting example nft
     function setPrizenum(uint256 _prizenum) external onlyOwner { prizenum = _prizenum; }
 

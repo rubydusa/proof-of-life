@@ -116,6 +116,20 @@ describe("GOLNFT", () => {
 		beforeEach(async () => {
 			await random.setVal(PRIZENUM2);
 		});
+		
+		it("Prizenum Updates Even if not Expired", async () => {
+			chai.expect(await golNFT.isExpired()).to.be.false;
+			
+			const input = {
+				data: VALID_DATA,
+				address: VALID_ADDRESS,
+			}
+			
+			await mint(input);
+
+			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
+			chai.expect(await golNFT.prizenum()).to.be.eq(PRIZENUM2);
+		});
 
 		it("Prizenum Updates After Expiration", async () => {
 			await helpers.time.increase(ethers.BigNumber.from(EXPR));
@@ -129,18 +143,6 @@ describe("GOLNFT", () => {
 			
 			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
 			chai.expect(await golNFT.prizenum()).to.be.eq(PRIZENUM2);
-		});
-
-		it("Prizenum Doesn't Update if not Expired", async () => {
-			const input = {
-				data: VALID_DATA,  
-				address: VALID_ADDRESS,
-			};
-
-			await mint(input);
-			
-			chai.expect(await golNFT.tokenId2prizenum("0")).to.be.eq(PRIZENUM);
-			chai.expect(await golNFT.prizenum()).to.be.eq(PRIZENUM);
 		});
 
 		it("Minting Works After Prizenum Changes", async () => {
