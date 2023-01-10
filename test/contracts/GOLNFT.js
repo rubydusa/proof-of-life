@@ -17,6 +17,7 @@ describe("GOLNFT", () => {
 	const W = "8";
 	const H = "8";
 	const EXPR = "86400";
+	const DUMMY_EXTERNAL_URL = "abc.com";
 
 	const CIRCUIT_NAME = "Main3N8x8";
 	const PRIZENUM = "14520449625737667765";
@@ -32,6 +33,7 @@ describe("GOLNFT", () => {
 	let random;
 	let verifier;
 	let golSVG;
+	let golMetadata;
 	let golNFT;
 
 	let attacker;
@@ -55,9 +57,12 @@ describe("GOLNFT", () => {
 
 		const GOLSVG = (await ethers.getContractFactory("GOLSVG")).connect(user);
 		golSVG = await GOLSVG.deploy();
+		
+		const GOLMetadata = (await ethers.getContractFactory("GOLMetadata")).connect(user);
+		golMetadata = await GOLMetadata.deploy(DUMMY_EXTERNAL_URL);
 
 		const GOLNFT = (await ethers.getContractFactory("GOLNFT")).connect(user);
-		golNFT = await GOLNFT.deploy(verifier.address, random.address, golSVG.address, W, H, EXPR);
+		golNFT = await GOLNFT.deploy(verifier.address, random.address, golSVG.address, golMetadata.address, W, H, EXPR);
 	});
 
 	describe("Base Tests", () => {
@@ -168,7 +173,17 @@ describe("GOLNFT", () => {
 		});
 	});
 
-	describe("SVG", () => {
+	const parseImageData = (s) => {
+		const JSON_DATA_URI = "data:application/json;base64,";
+		const SVG_DATA_URI = "data:image/svg+xml;base64,";
+
+		const jsonString = Buffer.from(s.slice(JSON_DATA_URI.length), "base64").toString();
+		const json = JSON.parse(jsonString);
+		json["image_data"] = Buffer.from(json["image_data"].slice(SVG_DATA_URI.length), "base64").toString();
+		return json;
+	} 
+
+	describe("Metadata", () => {
 		it("Works for a valid tokenId", async () => {
 			const input = {
 				data: VALID_DATA,  
@@ -178,9 +193,10 @@ describe("GOLNFT", () => {
 			await mint(input);
 
 			const resultString = await golNFT.tokenURI("0");
-			chai.expect(resultString).to.startWith("data:image/svg+xml;base64,");
-			const svgString = Buffer.from(resultString.replace("data:image/svg+xml;base64,", ""), "base64").toString();
-			chai.expect(isSvg(svgString)).to.be.true;
+			const metadata = parseImageData(resultString);
+			
+			chai.expect(isSvg(metadata["image_data"])).to.be.true;
+			chai.expect(metadata["external_url"]).to.be.eq(DUMMY_EXTERNAL_URL);
 		});
 
 		it("Doesn't work for a non valid tokenId", async () => {

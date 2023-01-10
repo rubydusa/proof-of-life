@@ -2,8 +2,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interfaces/IGOLMetadata.sol";
 
-contract GOLMetadata is Ownable {
+contract GOLMetadata is IGOLMetadata, Ownable {
     using Strings for uint256;
     
     string public externalUrl;

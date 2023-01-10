@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "./interfaces/IGroth16Verifier.sol";
 import "./interfaces/IRandom.sol";
 import "./interfaces/IGOLSVG.sol";
-
+import "./interfaces/IGOLMetadata.sol";
 
 contract GOLNFT is Ownable, ERC721Enumerable {
     uint256 immutable public W;
@@ -21,14 +21,16 @@ contract GOLNFT is Ownable, ERC721Enumerable {
     IGroth16Verifier public verifier;
     IRandom public random;
     IGOLSVG public svg;
+    IGOLMetadata public metadata;
 
     mapping(uint256 => bool) public proofs;
     mapping(uint256 => uint256) public tokenId2prizenum;
 
-    constructor(address _verifier, address _random, address _svg, uint256 _W, uint256 _H, uint256 _EXPR) ERC721("Game Of Life ZKNFT", "GOLZK") {
+    constructor(address _verifier, address _random, address _svg, address _metadata, uint256 _W, uint256 _H, uint256 _EXPR) ERC721("Game Of Life ZKNFT", "GOLZK") {
 		verifier = IGroth16Verifier(_verifier);
         random = IRandom(_random);
         svg = IGOLSVG(_svg);
+        metadata = IGOLMetadata(_metadata);
 
         W = _W;
         H = _H;
@@ -49,9 +51,15 @@ contract GOLNFT is Ownable, ERC721Enumerable {
 
     function tokenURI(uint256 tokenId) public view override tokenIdExists(tokenId) returns (string memory) {
         return string.concat(
-            "data:image/svg+xml;base64,",
+            "data:application/json;base64,",
             Base64.encode(
-                bytes(svg.svg(tokenId, tokenId2prizenum[tokenId]))
+                metadata.metadata(
+                    tokenId, 
+                    string.concat(
+                        "data:image/svg+xml;base64,",
+                        Base64.encode(svg.svg(tokenId, tokenId2prizenum[tokenId]))
+                    )
+                )
             )
         );
     }
