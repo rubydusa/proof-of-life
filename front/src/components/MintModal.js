@@ -10,6 +10,8 @@ import { GOLNFTContractConfig } from '../data/contractConfigs';
 import XSVGIcon from './ButtonIcons/XSVGIcon';
 import LoadingSVGIcon from './AnimatedIcons/LoadingSVGIcon';
 
+import dataURIParse from '../dataURIParse';
+
 /*
  * Note: isError and error are not related to if the transaction reverted, but rather if the process of
  * waiting for the transaction itself had any failures
@@ -36,7 +38,7 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
           <div className='portal-flex-overflow portal-button-menu' style={{
             flex: 1,
           }}>
-            <button class='btn' onClick={close}>
+            <button className='btn' onClick={close}>
               <XSVGIcon/>
             </button>
           </div>
@@ -52,7 +54,7 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
             {
               isError ? <div>Error! {error}</div> :
               isLoading ? <div><LoadingSVGIcon/></div> :
-              txSuccess ? <SVG src={src} /> :
+              txSuccess && !!src ? <SVG src={dataURIParse(src)["image_data"]} /> :
               'Transaction reverted!'
             }
           </div>

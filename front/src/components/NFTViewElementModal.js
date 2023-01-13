@@ -5,6 +5,8 @@ import { useForceUpdate } from '../hooks';
 import XSVGIcon from './ButtonIcons/XSVGIcon';
 import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
 
+import dataURIParse from '../dataURIParse';
+
 export default function NFTViewElementModal({data, close}) {
   const {content, address} = data;
   const [forceNonce, forceUpdate] = useForceUpdate();
@@ -19,10 +21,10 @@ export default function NFTViewElementModal({data, close}) {
                 <div className='portal-button-menu' style={{
                   flex: 1,
                 }}>
-                  <button class='btn' onClick={close}>
+                  <button className='btn' onClick={close}>
                     <XSVGIcon/> 
                   </button>
-                  <button class='btn' onClick={forceUpdate}>
+                  <button className='btn' onClick={forceUpdate}>
                     <PlaySVGIcon/>
                   </button>
                 </div>
@@ -31,7 +33,7 @@ export default function NFTViewElementModal({data, close}) {
                 }}>
                   <iframe 
                     key={forceNonce}
-                    src={content}
+                    src={dataURIParse(content)["image_data"]}
                     title="none"
                     width="100%"
                     height="100%"/>

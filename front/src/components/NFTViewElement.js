@@ -1,4 +1,5 @@
 import React from 'react';
+import dataURIParse from '../dataURIParse';
 
 export default function NFTViewElement({data, onClick, forceNonce}) {
   const { content } = data;
@@ -15,7 +16,7 @@ export default function NFTViewElement({data, onClick, forceNonce}) {
           </div>
           <iframe 
             key={forceNonce}
-            src={content}
+            src={dataURIParse(content)["image_data"]}
             title="none"/>
         </div>
       : <div></div>
