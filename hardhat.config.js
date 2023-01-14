@@ -9,7 +9,7 @@ module.exports = {
         hardhat: {
         },
         goerli: {
-            url: "https://rpc.ankr.com/eth_goerli",
+            url: process.env.GOERLI_RPC,
             accounts: [process.env.DEPLOYER_KEY]
         }
     },
@@ -100,7 +100,7 @@ module.exports = {
             },
             Main3N8x8: {
                 protocol: "groth16",
-                beacon: "0000000000000000000000000000000000000000000000000000000000000000",
+                // beacon: "0000000000000000000000000000000000000000000000000000000000000000",
                 version: "2.0.8",
                 path: "circuits/main.circom",
                 componentName: "Main",

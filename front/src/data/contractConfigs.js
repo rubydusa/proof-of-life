@@ -3,7 +3,7 @@ import GOLNFTABI from './abi/GOLNFTABI.json';
 
 const GOLNFTContractConfig = {
   address: deploymentData.contracts.golNFT.address,
-  abi: GOLNFTABI,
+  abi: GOLNFTABI
 };
 
-export { GOLNFTContractConfig }
+export { GOLNFTContractConfig };
