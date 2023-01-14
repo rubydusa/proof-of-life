@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext } from 'react';
 import useNFTView from '../hooks/useNFTView';
 import NFTViewElement from './NFTViewElement';
 import { useForceUpdate } from '../hooks';
@@ -18,31 +18,30 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [modal, setModal] = useState(null);
   const [forceNonce, forceUpdate] = useForceUpdate();
-  
-  const { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = useNFTView({ 
-    viewOrder, 
-    viewOwner, 
+
+  const { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = useNFTView({
+    viewOrder,
+    viewOwner,
     pageSize: PAGESIZE,
     viewOwnerAddress: address,
     totalSupply,
-    addressBalance,
+    addressBalance
   });
-  
+
   if (isError) {
     return (
       <div>
         An Error occured: {error}
       </div>
-    )
-  }
-  else if (isLoading) {
+    );
+  } else if (isLoading) {
     return (
       <div>
         Loading
       </div>
-    )
+    );
   }
-  
+
   // for some reason sometimes isFetching is true and isLoading and isError are false
   // but pages are still undefined, huh?
   if (!pages) {
@@ -50,17 +49,17 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
       <div>
         Pages unavailable
       </div>
-    )
+    );
   }
-  
+
   if (hasNextPage && !isFetching && pageIndex === pages.length - 1) {
     fetchNextPage();
   }
-  
+
   const onNFTViewElementClick = (src) => {
     setModal(src);
-  }
-  
+  };
+
   return (
     <div className='nft-view'>
       <div className='content-border'>
@@ -70,7 +69,7 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             onClick={forceUpdate}>
             <PlaySVGIcon/>
           </button>
-          <button 
+          <button
             className='btn'
             disabled={pageIndex === pages.length - 1}
             onClick={() => {
@@ -86,9 +85,9 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             }}>
             Previous Page
           </button>
-          <select 
+          <select
             className='slct'
-            value={viewOrder} 
+            value={viewOrder}
             onChange={(e) => {
               setViewOrder(parseInt(e.target.value));
               setPageIndex(0);
@@ -97,9 +96,9 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             <option value={ViewOrder.FIRST}>First</option>
             <option value={ViewOrder.LAST}>Last</option>
           </select>
-          <select 
+          <select
             className='slct'
-            value={viewOwner} 
+            value={viewOwner}
             onChange={(e) => {
               setViewOwner(parseInt(e.target.value));
               setPageIndex(0);
@@ -108,17 +107,17 @@ export default function NFTView({ address, totalSupply, addressBalance }) {
             <option value={ViewOwner.USER}>Mine</option>
           </select>
         </div>
-      <div className='nft-view-display-area'>
+        <div className='nft-view-display-area'>
+          {
+            pages[pageIndex] && pages[pageIndex].map(
+              (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick} forceNonce={forceNonce}/>
+            )
+          }
+        </div>
         {
-          pages[pageIndex] && pages[pageIndex].map(
-            (data, i) => <NFTViewElement key={i} data={data} onClick={onNFTViewElementClick} forceNonce={forceNonce}/>
-          )
+          modal !== null && <NFTViewElementModal data={modal} close={() => setModal(null)}/>
         }
       </div>
-      {
-        modal !== null && <NFTViewElementModal data={modal} close={() => setModal(null)}/>
-      }
-      </div>
     </div>
-  )
+  );
 }

@@ -12,8 +12,8 @@ import GlobalContext from '../data/global';
 const snarkjs = window.snarkjs;
 
 export default forwardRef(function GridProofToolset({
-  grid, 
-  prizenum, 
+  grid,
+  prizenum
 }, ref) {
   const { CIRCUIT_PATH, EXCEPTIONS } = useContext(GlobalContext);
   const { address, isConnected } = useAccount();
@@ -29,21 +29,20 @@ export default forwardRef(function GridProofToolset({
     onError(error) {
       if (error.reason === EXCEPTIONS.SOLUTION_ALREADY_EXISTS) {
         setErrorMessage('Solution already exists');
-      }
-      else {
+      } else {
         setErrorMessage('Something went terribly wrong...');
       }
     }
   });
-  
+
   const { data: mintData, write: mint, isLoading: isMintLoading, isSuccess: isMintStarted, reset: resetMint } = useContractWrite(config);
   const { data: txReceipt, error: txError, isSuccess: txSuccess, isError: txIsError } = useWaitForTransaction({ hash: mintData?.hash });
-  
+
   /**
-   * Compute calldata with a debounce of a second. 
+   * Compute calldata with a debounce of a second.
    * Doesn't change state if invalid proof (aside from error message)
-   * 
-   * It's possible the useEffect has been called twice and two generateProofCalldata are running at the same time 
+   *
+   * It's possible the useEffect has been called twice and two generateProofCalldata are running at the same time
    */
   const [debouncedGrid, flush] = useDebounce(grid, 500);
   useEffect(() => {
@@ -56,19 +55,19 @@ export default forwardRef(function GridProofToolset({
         circutPath: CIRCUIT_PATH
       });
       setIsGenerating(false);
-     
+
       calldata && setProofCalldata(calldata);
     })();
   }, [address, debouncedGrid, prizenum, CIRCUIT_PATH]);
-  
+
   /**
    * Disable clicking on submit proof button during debounce period
    */
   useEffect(() => {
     setProofCalldata(null);
     setErrorMessage('');
-  }, [grid])
-  
+  }, [grid]);
+
   /**
    * Enable parents to call flush
    */
@@ -79,19 +78,19 @@ export default forwardRef(function GridProofToolset({
   return (
     <>
       <div className='grid-proof-toolset'>
-        <button 
+        <button
           className='btn'
           disabled={!mint || isMintLoading || isMintStarted || !isConnected}
           onClick={mint}>
           Generate Proof
-        </button> 
-        <p style={{height: '1em', margin: '0px'}}>
+        </button>
+        <p style={{ height: '1em', margin: '0px' }}>
           {isGenerating && 'Generating proof...'}
           {errorMessage}
         </p>
       </div>
-      {isMintStarted && 
-      <MintModal 
+      {isMintStarted &&
+      <MintModal
         isSuccess={txSuccess}
         isError={txIsError}
         receipt={txReceipt}
@@ -101,10 +100,10 @@ export default forwardRef(function GridProofToolset({
         }}/>
       }
     </>
-  )
-})
+  );
+});
 
-const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
+const generateProofCalldata = async ({ address, grid, prizenum, circutPath }) => {
   if (!address) {
     return null;
   }
@@ -112,12 +111,12 @@ const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     {
       address,
-      data: [gridToNum(grid).toString()],
+      data: [gridToNum(grid).toString()]
     },
     `${circutPath}.wasm`,
-    `${circutPath}.zkey`,
+    `${circutPath}.zkey`
   );
-  
+
   /**
    * For some reason the encoding of a, b, and c in proof is really messed up
    * so you need to convert it to solidity calldata format and then extract a, b, and c
@@ -125,10 +124,10 @@ const generateProofCalldata = async ({address, grid, prizenum, circutPath}) => {
   const resultGridNum = publicSignals[2];
   const solidityCalldata = JSON.parse(`[${await snarkjs.groth16.exportSolidityCallData(proof, publicSignals)}]`);
   const solidityCalldataArgs = [
-    publicSignals[0],  
-    publicSignals[1], 
-    ...solidityCalldata.slice(0,3),
-  ]
+    publicSignals[0],
+    publicSignals[1],
+    ...solidityCalldata.slice(0, 3)
+  ];
 
-  return prizenum.eq(resultGridNum) ? solidityCalldataArgs : null; 
-} 
+  return prizenum.eq(resultGridNum) ? solidityCalldataArgs : null;
+};

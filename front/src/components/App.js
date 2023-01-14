@@ -1,3 +1,4 @@
+import React from 'react';
 import Navbar from './Navbar';
 import About from './About';
 import GridDisplay from './GridDisplay';
@@ -15,10 +16,10 @@ export default function App() {
       <Navbar/>
       <About />
       <div style={{
-        minHeight: '100vh',
+        minHeight: '100vh'
       }}>
-      <GridDisplay/>
-      <NFTViewWrapper />
+        <GridDisplay/>
+        <NFTViewWrapper />
       </div>
     </WagmiConfig>
   );

@@ -5,10 +5,10 @@ import { runSimulationStep } from '../game';
 import ArrowSVGIcon from './ButtonIcons/ArrowSVGIcon';
 import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
 
-export default function GridInputToolset({grid, setGrid, flush}) {
+export default function GridInputToolset({ grid, setGrid, flush }) {
   const history = useRef([]);
   const forwardHistory = useRef([]);
-  
+
   useEffect(() => {
     if (history.current[history.current.length - 1] !== grid) {
       history.current.push(grid);
@@ -30,7 +30,7 @@ export default function GridInputToolset({grid, setGrid, flush}) {
             const prev = history.current.pop();
             forwardHistory.current.push(curr);
             setGrid(prev);
-          } 
+          }
         }}>
         <ArrowSVGIcon backwards={true}/>
       </button>
@@ -44,5 +44,5 @@ export default function GridInputToolset({grid, setGrid, flush}) {
         <ArrowSVGIcon backwards={false}/>
       </button>
     </div>
-  )
+  );
 }

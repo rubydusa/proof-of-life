@@ -20,11 +20,11 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
   const txSuccess = isSuccess && receipt.status === 1;
   const isLoading = !isSuccess && !isError;
 
-  const { data: src, isError: isURIError, isSuccess: isURISuccess } = useContractRead({
+  const { data: src } = useContractRead({
     ...GOLNFTContractConfig,
     functionName: 'tokenURI',
     args: [txSuccess ? getTokenIdFromTransactionReceipt(receipt) : null],
-    enabled: txSuccess,
+    enabled: txSuccess
   });
 
   return ReactDOM.createPortal(
@@ -33,10 +33,10 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
         <div className='portal-layout' style={{
           width: '60vw',
           height: '40vh',
-          marginTop: '25vh',
+          marginTop: '25vh'
         }}>
           <div className='portal-flex-overflow portal-button-menu' style={{
-            flex: 1,
+            flex: 1
           }}>
             <button className='btn' onClick={close}>
               <XSVGIcon/>
@@ -44,18 +44,21 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
           </div>
           {txSuccess && <div className='portal-flex-overflow' style={{
             flex: 1,
-            fontWeight: 'bold',
+            fontWeight: 'bold'
           }}>
             Congratulations!
           </div>}
           <div className='portal-element-container portal-flex-overflow' style={{
-            flex: 6, 
+            flex: 6
           }}>
             {
-              isError ? <div>Error! {error}</div> :
-              isLoading ? <div><LoadingSVGIcon/></div> :
-              txSuccess && !!src ? <SVG src={dataURIParse(src)["image_data"]} /> :
-              'Transaction reverted!'
+              isError
+                ? <div>Error! {error}</div>
+                : isLoading
+                  ? <div><LoadingSVGIcon/></div>
+                  : txSuccess && !!src
+                    ? <SVG src={dataURIParse(src).image_data} />
+                    : 'Transaction reverted!'
             }
           </div>
         </div>
@@ -69,4 +72,4 @@ export default function MintModal({ isSuccess, isError, receipt, error, close })
 
 const getTokenIdFromTransactionReceipt = (receipt) => {
   return BigNumber.from(receipt.logs[0].topics[3]);
-}
+};

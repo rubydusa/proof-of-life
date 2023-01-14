@@ -6,15 +6,15 @@ import { ViewOrder, ViewOwner } from '../enums';
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 
-export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply, addressBalance, viewOwnerAddress}) {
+export default function useNFTView ({ viewOrder, viewOwner, pageSize, totalSupply, addressBalance, viewOwnerAddress }) {
   const pagesDataIncrement = useContractInfiniteReads({
     cacheKey: 'nftViewsIncrement',
     ...paginatedIndexesConfig(
       pagesDataTemplate,
-      { 
+      {
         start: 0,
         perPage: pageSize,
-        direction: 'increment',
+        direction: 'increment'
       }
     ),
     getNextPageParam: nftViewGetNextPageParam(pageSize)
@@ -24,10 +24,10 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     cacheKey: 'nftViewsDecrement',
     ...paginatedIndexesConfig(
       pagesDataTemplate,
-      { 
+      {
         start: totalSupply.sub(1),
         perPage: pageSize,
-        direction: 'decrement',
+        direction: 'decrement'
       }
     ),
     getNextPageParam: nftViewGetNextPageParam(pageSize)
@@ -37,56 +37,54 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
     cacheKey: 'nftViewsTokenIDsDecrement',
     ...paginatedIndexesConfig(
       addressTokenIDsTemplate(viewOwnerAddress),
-      { 
+      {
         start: addressBalance.sub(1),
         perPage: pageSize,
-        direction: 'decrement',
+        direction: 'decrement'
       }
     ),
     getNextPageParam: nftViewAddressTokenIdsGetNextPageParam(pageSize, addressBalance),
     enabled: viewOwner === ViewOwner.USER
   });
 
-  // pages are flattened 
+  // pages are flattened
   const userPagesData = useContractReads({
     contracts: addressTokenIDs.data
-    ? addressTokenIDs.data.pages
-      .map(pagesUserTemplate)
-      .flat()
-    : []
+      ? addressTokenIDs.data.pages
+        .map(pagesUserTemplate)
+        .flat()
+      : []
   });
 
   if (viewOwner === ViewOwner.ALL) {
-    const { data, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = 
+    const { data, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } =
       viewOrder === ViewOrder.FIRST
-        ? pagesDataIncrement 
-        : pagesDataDecrement; 
-    
+        ? pagesDataIncrement
+        : pagesDataDecrement;
+
     const pages = data !== undefined ? formatPages(data.pages) : undefined;
-    
+
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
-  } 
-  else {
+  } else {
     // view order doesn't matter when ViewOwner === USER
     // ERC721Enumerable doesn't perserve order
     // I choose decrement enumeration because more likely to show recent relavent mints
-    const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage} = addressTokenIDs;
+    const { fetchNextPage, isLoading, isError, error, isFetching, hasNextPage } = addressTokenIDs;
     const { data } = userPagesData;
-    
+
     // chunkify
     // no queries to tokenID owner so need to inject it manually
     // formatPages is technically not neccessarry but done to ensure consistent API
-    const pages = data !== undefined 
+    const pages = data !== undefined
       ? formatPages(
-          chunkify(data, pageSize) // construct pages
-            .map(page => {  // capsule each dataURI with an address
-              return page.map(dataURI => [dataURI, viewOwnerAddress]);
-            })
-            .map(page => page.flat()) // deconstruct capsule: [[1, 2], [3, 4]] => [1, 2, 3, 4]
-        )
+        chunkify(data, pageSize) // construct pages
+          .map(page => { // capsule each dataURI with an address
+            return page.map(dataURI => [dataURI, viewOwnerAddress]);
+          })
+          .map(page => page.flat()) // deconstruct capsule: [[1, 2], [3, 4]] => [1, 2, 3, 4]
+      )
       : undefined;
 
-    
     return { pages, fetchNextPage, isLoading, isError, error, isFetching, hasNextPage };
   }
 }
@@ -94,36 +92,36 @@ export default function useNFTView({viewOrder, viewOwner, pageSize, totalSupply,
 const nftViewGetNextPageParam = (pageSize) => (lastPage, allPages) => {
   // god fucking dammit wagmi why can't you bundle queries together
   return lastPage.every(el => el !== null) && lastPage.length / 2 === pageSize ? allPages.length : undefined;
-}
+};
 
 const nftViewAddressTokenIdsGetNextPageParam = (pageSize, addressBalance) => (lastPage, allPages) => {
   // UGHHHHHHH stupid fucking bug - page sizes are inconsistent across user modes
   // full page size of USER mode: 2, full page size of ALL mode: 4
   // const expectedNextPageParam = nftViewGetNextPageParam(pageSize)(lastPage, allPages);
   const expectedNextPageParam = lastPage.every(el => el !== null) && lastPage.length === pageSize ? allPages.length : undefined;
-  
+
   if (expectedNextPageParam !== undefined) {
-    return allPages.length * pageSize < addressBalance.toNumber() 
+    return allPages.length * pageSize < addressBalance.toNumber()
       ? expectedNextPageParam
       : undefined;
   }
-  
+
   return undefined;
-}
+};
 
 const pagesDataTemplate = (index) => {
   return [
     {
       ...GOLNFTContractConfig,
       functionName: 'tokenURI',
-      args: [BigNumber.from(index)], 
+      args: [BigNumber.from(index)]
     },
     {
       ...GOLNFTContractConfig,
       functionName: 'ownerOf',
-      args: [BigNumber.from(index)],
+      args: [BigNumber.from(index)]
     }
-  ]
+  ];
 };
 
 const addressTokenIDsTemplate = (viewOwnerAddress) => (index) => {
@@ -131,10 +129,10 @@ const addressTokenIDsTemplate = (viewOwnerAddress) => (index) => {
     {
       ...GOLNFTContractConfig,
       functionName: 'tokenOfOwnerByIndex',
-      args: [viewOwnerAddress, BigNumber.from(index)], 
+      args: [viewOwnerAddress, BigNumber.from(index)]
     }
-  ]
-}
+  ];
+};
 
 const pagesUserTemplate = (page) => {
   return page.map(tokenId => {
@@ -142,9 +140,9 @@ const pagesUserTemplate = (page) => {
       ...GOLNFTContractConfig,
       functionName: 'tokenURI',
       args: [tokenId]
-    }
+    };
   });
-}
+};
 
 /*
 pages pre-formatted:
@@ -161,22 +159,22 @@ const formatPages = (pages) => {
       .map(([dataURI, address]) => {
         return {
           content: dataURI,
-          address,
-        }
+          address
+        };
       });
   });
-}
+};
 
 const chunkify = (data, pageSize) => {
   return data.reduce((resultArray, item, index) => {
-    const chunkIndex = Math.floor(index / pageSize)
+    const chunkIndex = Math.floor(index / pageSize);
 
     if (!resultArray[chunkIndex]) {
-      resultArray[chunkIndex] = [] // start a new chunk
+      resultArray[chunkIndex] = []; // start a new chunk
     }
-  
-    resultArray[chunkIndex].push(item)
-  
-    return resultArray
+
+    resultArray[chunkIndex].push(item);
+
+    return resultArray;
   }, []);
-}
+};

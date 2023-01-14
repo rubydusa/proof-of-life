@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import ConnectWallet from './ConnectWallet';
 import ToggleTheme from './ToggleTheme';
 
@@ -10,5 +10,5 @@ export default function Navbar() {
       <ConnectWallet />
       <ToggleTheme />
     </div>
-  )
+  );
 }

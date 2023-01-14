@@ -1,18 +1,18 @@
-import React, { useContext, useReducer } from 'react'
+import React, { useContext, useReducer } from 'react';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
-import { numToGrid, gridToNum } from '../game'
+import { numToGrid, gridToNum } from '../game';
 
-import GlobalContext from '../data/global'
+import GlobalContext from '../data/global';
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 
-export default function GridInputAdvancedToolset({grid, gridInput, setGridInput, flush, prizenum}) {
+export default function GridInputAdvancedToolset({ grid, gridInput, setGridInput, flush, prizenum }) {
   const { GRID_SETTINGS } = useContext(GlobalContext);
-  const { config: newChallengeConfig, error: newChallengeError } = usePrepareContractWrite({
+  const { config: newChallengeConfig } = usePrepareContractWrite({
     ...GOLNFTContractConfig,
-    functionName: 'updateExpiredPrizenum',
+    functionName: 'updateExpiredPrizenum'
   });
-  
+
   const { write: generateNewChallenge } = useContractWrite(newChallengeConfig);
   const [hasGeneratedNewChallenge, setHasGeneratedNewChallenge] = useReducer(() => true, false);
 
@@ -20,11 +20,11 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
     <div className='grid-input-advanced-toolset'>
       <h2 style={{
         textAlign: 'center',
-        padding: '0px 2px',
+        padding: '0px 2px'
       }}>
         Advanced Toolset
       </h2>
-      <button 
+      <button
         className='btn'
         style={{
           width: '80%'
@@ -32,7 +32,7 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
         onClick={() => flush(numToGrid(gridInput, GRID_SETTINGS))}>
         Load
       </button>
-      <button 
+      <button
         className='btn'
         style={{
           width: '80%'
@@ -53,7 +53,7 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
         Current Number:
       </div>
       <h4 style={{
-        margin: '0px',
+        margin: '0px'
       }}>
         {grid ? gridToNum(grid).toString() : 'Grid Not Available'}
       </h4>
@@ -61,7 +61,7 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
         Target Number:
       </div>
       <h4 style={{
-        margin: '0px',
+        margin: '0px'
       }}>
         {prizenum ? prizenum.toString() : 'Target Not Available'}
       </h4>
@@ -75,8 +75,8 @@ export default function GridInputAdvancedToolset({grid, gridInput, setGridInput,
         New Challenge
       </button>
       <div className='advanced-input-label'>
-        {hasGeneratedNewChallenge && "After transacting please wait for confirmation from your wallet and restart the page"}
+        {hasGeneratedNewChallenge && 'After transacting please wait for confirmation from your wallet and restart the page'}
       </div>
     </div>
-  )
+  );
 }

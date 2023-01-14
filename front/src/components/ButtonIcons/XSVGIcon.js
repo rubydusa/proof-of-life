@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
 
 import { ReactComponent as XSVG } from '../../svgs/x-svgrepo-com.svg';
 
 export default function XSVGIcon() {
   return (
-    <XSVG 
+    <XSVG
       className='svg-btn-icon'
       style={{
-        transform: 'translate(0px, 2px)',
+        transform: 'translate(0px, 2px)'
       }}/>
-  )
+  );
 }

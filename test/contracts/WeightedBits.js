@@ -10,18 +10,18 @@ const _callWeightedBits = (selector) => async (weightedBitLib, seed, p, d) => {
         to: weightedBitLib.address,
         data: ethers.utils.hexConcat([
             selector,
-            ethers.utils.defaultAbiCoder.encode(["tuple(uint256)", "uint256", "uint256"], [[seed], p, d])            
-        ]),
+            ethers.utils.defaultAbiCoder.encode(["tuple(uint256)", "uint256", "uint256"], [[seed], p, d])
+        ])
     });
-}
+};
 
 const computeFunctionSignature = (func) => {
     return ethers.utils.hexDataSlice(
         ethers.utils.keccak256(ethers.utils.toUtf8Bytes(func)),
         0,
         4
-    )
-}
+    );
+};
 
 describe("WeightedBits", () => {
     // library has different function selector encoding than a regular contract
@@ -31,7 +31,7 @@ describe("WeightedBits", () => {
     let weightedBitsLib;
 
     beforeEach(async () => {
-        ethers.getContractFactoryFromArtifact()
+        ethers.getContractFactoryFromArtifact();
         const WeightedBitsLib = await ethers.getContractFactory("WeightedBits");
         weightedBitsLib = await WeightedBitsLib.deploy();
     });
@@ -42,26 +42,26 @@ describe("WeightedBits", () => {
         const a1 = await callWeightedBits(weightedBitsLib, seed, 1, 2);
         await helpers.mine();
         const a2 = await callWeightedBits(weightedBitsLib, seed, 1, 2);
-        
+
         chai.expect(a1).to.be.eq(a2);
     });
-    
+
     it("Different for different seeds", async () => {
         const seed1 = "123";
         const seed2 = "124";
-        
+
         const a1 = await callWeightedBits(weightedBitsLib, seed1, 1, 2);
         const a2 = await callWeightedBits(weightedBitsLib, seed2, 1, 2);
-        
+
         chai.expect(a1).to.not.be.eq(a2);
     });
-    
+
     it("d == 0 acts like d == 1", async () => {
         const seed = "123";
 
         const a1 = await callWeightedBits(weightedBitsLib, seed, 2, 0);
         const a2 = await callWeightedBits(weightedBitsLib, seed, 2, 1);
-        
+
         chai.expect(a1).to.be.eq(a2);
     });
 
@@ -70,7 +70,7 @@ describe("WeightedBits", () => {
 
         const a1 = await callWeightedBits(weightedBitsLib, seed, 0, 2);
         const a2 = await callWeightedBits(weightedBitsLib, seed, 1, 2);
-        
+
         chai.expect(a1).to.be.eq(a2);
     });
 });

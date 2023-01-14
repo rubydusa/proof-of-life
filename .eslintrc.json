@@ -1,0 +1,22 @@
+{
+    "env": {
+        "browser": false,
+        "commonjs": true,
+        "es2021": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "semi": ["error", "always"],
+        "indent": ["error", 4],
+        "quotes": ["error", "double"],
+        "comma-dangle": ["error", "never"],
+        "space-before-function-paren": "off"
+    }
+}

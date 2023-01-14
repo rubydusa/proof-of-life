@@ -7,33 +7,33 @@ import PlaySVGIcon from './ButtonIcons/PlaySVGIcon';
 
 import dataURIParse from '../dataURIParse';
 
-export default function NFTViewElementModal({data, close}) {
-  const {content, address} = data;
+export default function NFTViewElementModal({ data, close }) {
+  const { content, address } = data;
   const [forceNonce, forceUpdate] = useForceUpdate();
 
   return ReactDOM.createPortal(
     <>
-    { 
-      content !== null 
-        ? <>
+      {
+        content !== null
+          ? <>
             <div className='portal-root'>
               <div className='portal-layout'>
                 <div className='portal-button-menu' style={{
-                  flex: 1,
+                  flex: 1
                 }}>
                   <button className='btn' onClick={close}>
-                    <XSVGIcon/> 
+                    <XSVGIcon/>
                   </button>
                   <button className='btn' onClick={forceUpdate}>
                     <PlaySVGIcon/>
                   </button>
                 </div>
                 <div className='portal-element-container portal-flex-overflow' style={{
-                  flex: 12,
+                  flex: 12
                 }}>
-                  <iframe 
+                  <iframe
                     key={forceNonce}
-                    src={dataURIParse(content)["image_data"]}
+                    src={dataURIParse(content).image_data}
                     title="none"
                     width="100%"
                     height="100%"/>
@@ -42,18 +42,18 @@ export default function NFTViewElementModal({data, close}) {
                   flex: 6,
                   maxWidth: '100%',
                   boxSizing: 'border-box',
-                  marginTop: '24px',
+                  marginTop: '24px'
                 }}>
                   Owner Address: <b>{address}</b>
                 </div>
               </div>
-            </div> 
+            </div>
             <div className='portal-background'>
             </div>
           </>
-        : <div></div>
-    }
+          : <div></div>
+      }
     </>,
     document.getElementById('portal')
-  )
+  );
 }

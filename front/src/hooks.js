@@ -1,18 +1,18 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from 'react';
 
-export function useDebounce(value, delay) {
+export function useDebounce (value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
   const lastTimer = useRef();
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedValue(value), delay);
     lastTimer.current = timer;
-    
+
     return () => {
       clearTimeout(timer);
-    }
+    };
   }, [value, delay]);
-  
+
   return [
     debouncedValue,
     (immediateValue) => {
@@ -22,13 +22,13 @@ export function useDebounce(value, delay) {
     () => {
       clearTimeout(lastTimer.current);
     }
-  ]
+  ];
 }
 
-export function useForceUpdate() {
+export function useForceUpdate () {
   const [forceNonce, dispatch] = useReducer(state => state + 1, 0);
   return [
     forceNonce,
-    dispatch,
-  ]
+    dispatch
+  ];
 }

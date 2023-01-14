@@ -1,5 +1,5 @@
-import { useAccount, useContractRead } from 'wagmi'
-import React from 'react'
+import { useAccount, useContractRead } from 'wagmi';
+import React from 'react';
 
 import { GOLNFTContractConfig } from '../data/contractConfigs';
 import NFTView from './NFTView';
@@ -12,7 +12,7 @@ export default function NFTViewWrapper() {
   const { address, isConnected } = useAccount();
   const { data: totalSupply, status: totalSupplyStatus } = useContractRead({
     ...GOLNFTContractConfig,
-    functionName: 'totalSupply',
+    functionName: 'totalSupply'
   });
 
   const { data: addressBalance, status: addressBalanceStatus } = useContractRead({
@@ -29,25 +29,23 @@ export default function NFTViewWrapper() {
           Please connect your wallet
         </p>
       </div>
-    )
-  }
-  else if (totalSupplyStatus === Status.ERROR || addressBalanceStatus === Status.ERROR) {
+    );
+  } else if (totalSupplyStatus === Status.ERROR || addressBalanceStatus === Status.ERROR) {
     return (
       <div>
         An error occured
       </div>
-    )
-  }
-  else if (totalSupplyStatus === Status.LOADING || addressBalanceStatus === Status.LOADING) {
+    );
+  } else if (totalSupplyStatus === Status.LOADING || addressBalanceStatus === Status.LOADING) {
     return (
       <div>
         <LoadingSVGIcon/>
       </div>
-    )
+    );
   }
   return (
     <div>
       <NFTView address={address} totalSupply={totalSupply} addressBalance={addressBalance}></NFTView>
     </div>
-  )
+  );
 }
