@@ -1,6 +1,8 @@
 import React from 'react';
 import SVG from 'react-inlinesvg';
 
+import deploymentData from '../data/deployment_data.json';
+
 import '../styles/About.css';
 
 /* eslint-disable react/no-unescaped-entities */
@@ -36,7 +38,7 @@ export default function About () {
         <p className='about-text-section-paragraph'>
           Not all Target Boards have Solutions, and sometimes all possible solutions have already been found. <br/>
           I've added a function to the Smart Contract that allows anyone to reset the challenge after the expiration period ends - 10 minutes <br/><br/>
-          <a href='https://goerli.etherscan.io/address/0xcf69f8f5b1c3d0828e16733fd804ff34e60f62f2'>
+          <a href={['https://goerli.etherscan.io/address/', deploymentData.contracts.golNFT.address].join('')}>
             NFT Contract on block explorer
           </a>
         </p>
